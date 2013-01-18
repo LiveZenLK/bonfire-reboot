@@ -360,7 +360,7 @@ class CI_Router {
 		// Apply the current module's routing config
 		if ($module = $this->uri->segment(0))
 		{
-			foreach ($$this->config->item('modules_locations') as $location)
+			foreach ($this->config->item('modules_locations') as $location)
 			{
 				if (is_file($file = $location . $module .'config/routes.php'))
 				{

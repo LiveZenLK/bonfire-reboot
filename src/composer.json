@@ -1,0 +1,34 @@
+{
+	"name":				"ci-bonfire/Bonfire",
+	"homepage":			"http://cibonfire.com",
+	"license":			"MIT",
+	"authors":	[
+		{
+			"name": "Lonnie Ezell",
+			"email": "lonnieezell@gmail.com",
+			"role": "Creator & Lead Developer"
+		}
+	],
+	"support": {
+		"forum": "http://forums.cibonfire.com/",
+		"wiki": "https://github.com/ci-bonfire/Bonfire/wiki",
+		"source": "https://github.com/ci-bonfire/Bonfire"
+	},
+	"require-dev":	{
+		"mockery/mockery": ">=0.7.2",
+		"simpletest/simpletest": "1.1.*"
+	},
+	"repositories": [
+		{
+			"type": "package",
+			"package": {
+				"name": "simpletest/simpletest",
+				"version": "1.1.0",
+				"dist": {
+					"url": "http://downloads.sourceforge.net/project/simpletest/simpletest/simpletest_1.1/simpletest_1.1.0.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fsimpletest%2Ffiles%2Fsimpletest%2Fsimpletest_1.1%2Fsimpletest_1.1.0.tar.gz%2Fdownload&ts=1358483294&use_mirror=voxel",
+					"type": "tar"
+				}
+			}
+		}
+	]
+}

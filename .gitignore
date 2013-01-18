@@ -1,0 +1,74 @@
+# Ignore OS Related/Generic
+#------------------------------------------------------
+Thumbs.db
+Desktop.ini
+._*
+Icon?
+*.DS_Store
+*.bak
+*.tmproj
+*.tmproject
+*~
+
+# IDEs project files/settings
+#------------------------------------------------------
+nbproject/
+nbactions.xml
+.settings/
+.project
+.metadata
+.properties
+*.ideas
+*.idea/*
+
+# Ignore Bonfire Application Specifics
+#------------------------------------------------------
+src/application/logs/*
+!src/application/logs/index.html
+src/application/cache/*
+!src/application/cache/index.html
+src/public/assets/cache/*
+!src/public/assets/cache/index.html
+
+# Ignore Custom config files
+#------------------------------------------------------
+src/application/config/development/*
+src/application/config/testing/*
+src/application/config/production/*
+
+# but leave the config folders there
+#------------------------------------------------------
+!src/application/config/development/index.html
+!src/application/config/testing/index.html
+!src/application/config/production/index.html
+
+# Helping GUIs omiting subtree repos
+#------------------------------------------------------
+src/bonfire/modules/**/.git/*
+src/bonfire/modules/**/.hg/*
+src/application/modules/**/.git/*
+src/application/modules/**/.hg/*
+!src/application/modules/index.html
+
+
+# Ignore all custom modules.
+#------------------------------------------------------
+src/application/modules/*
+
+# Except the following modules:
+#------------------------------------------------------
+
+
+# Ignore the installed.txt file
+#------------------------------------------------------
+src/public/install/installed.txt
+
+# Don't save the public/tests.php file for security reasons.
+#------------------------------------------------------
+src/public/tests.php
+
+# Don't save our vendor files. Those should be
+# downloaded by each user to ensure current versions
+#------------------------------------------------------
+src/vendor/simpletest/*
+src/vendor/mockery/*

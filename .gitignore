@@ -72,3 +72,7 @@ src/public/tests.php
 #------------------------------------------------------
 src/vendor/simpletest/*
 src/vendor/mockery/*
+
+# Ignore composer lock file
+#------------------------------------------------------
+*/composer.lock

@@ -71,6 +71,25 @@ At it's simplest, you can run the <tt>tests/run.php</tt> script and all of your 
     php run.php
 
 
+#### Ignoring Bonfire Tests
+
+You generally are not going to want to test both your entire application as well as the Bonfire core at the same. To make this a little simpler, but still run a complete set of tests at once, we have provided two CLI arguments.
+
+<tt>-a, --app_only</tt>
+
+Will run all tests in the tests folder except for those located in the <tt>bonfire</tt> folder.
+
+    php tests/run.php -a
+    php tests/run.php --app_only
+
+<tt>-b, --bf_only</tt>
+
+Will run all tests in the tests folder except for those located in the <tt>application</tt> folder. This is intended to make contributing to Bonfire easier.
+
+    php tests/run.php -b
+    php tests/run.php -bf_only
+
+
 ### From the Browser
 
 Due to security precautions, the tests folder is not available from the web root by default. To get around this, you can create a new file in the web root that simply loads the existing <tt>run.php</tt> file in the <tt>tests</tt> folder.

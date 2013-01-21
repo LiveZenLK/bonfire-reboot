@@ -1047,6 +1047,9 @@ class CI_Loader {
 				continue;
 			}
 
+			// Try to load a Bonfire specific helper (BF_helper)
+			$bf_helper = BFPATH.'helpers/BF_'.$helper.'.php';
+
 			$ext_helper = APPPATH.'helpers/'.config_item('subclass_prefix').$helper.'.php';
 
 			// Is this a helper extension request?
@@ -1060,6 +1063,10 @@ class CI_Loader {
 				}
 
 				include_once($ext_helper);
+				if (file_exists($bf_helper))
+				{
+					include_once($bf_helper);
+				}
 				include_once($base_helper);
 
 				$this->_ci_helpers[$helper] = TRUE;
@@ -1074,10 +1081,22 @@ class CI_Loader {
 				{
 					include_once($path.'helpers/'.$helper.'.php');
 
+					// Load the BF_helper version if it exists
+					if (file_exists($bf_helper))
+					{
+						include_once($bf_helper);
+					}
+
 					$this->_ci_helpers[$helper] = TRUE;
 					log_message('debug', 'Helper loaded: '.$helper);
 					break;
 				}
+			}
+
+			// Still here? Try to load the BF_helper
+			if (file_exists($bf_helper))
+			{
+				include_once($bf_helper);
 			}
 
 			// unable to load the helper

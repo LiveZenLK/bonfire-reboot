@@ -737,10 +737,10 @@ class Route {
 	public static $routes 	= array();
 
 	// Holds key/value pairs of named routes
-	private static $names 	= array();
+	public static $names 	= array();
 
 	// Used for grouping routes together.
-	private static $group 	= null;
+	public static $group 	= null;
 
 	//--------------------------------------------------------------------
 
@@ -785,8 +785,14 @@ class Route {
 	 */
 	public static function with_name($name, $to)
 	{
+		// If we're grouped, prepend the group
+		if (!empty(self::$group))
+		{
+			$to = self::$group .'/'. $to;
+		}
+
 		// Store it separately for quick access later
-		self::$named[$name] = $to;
+		self::$names[$name] = $to;
 	}
 
 	//--------------------------------------------------------------------
@@ -823,7 +829,7 @@ class Route {
 			$ci->load->helper('url');
 		}
 
-		if (array_key_exists($name, self::$nams[$name]))
+		if (array_key_exists($name, self::$names[$name]))
 		{
 			return site_url(self::$names[$name]);
 		}
@@ -986,11 +992,25 @@ class Route {
 
 		self::get($name, $new_name .'/index');
 		self::get($name .'/new', $new_name .'/create');
-		self::get($name . $id .'/edit', $new_name .'/edit/$1');
-		self::get($name . $id, $new_name .'/show/$1');
+		self::get($name .'/'. $id .'/edit', $new_name .'/edit/$1');
+		self::get($name .'/'. $id, $new_name .'/show/$1');
 		self::post($name, $new_name .'/create');
-		self::put($name . $id, $new_name .'/update/$1');
-		self::delete($name . $id, $new_name .'/delete/$1');
+		self::put($name .'/'. $id, $new_name .'/update/$1');
+		self::delete($name .'/'. $id, $new_name .'/delete/$1');
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Empties all named and un-named routes from the system.
+	 *
+	 * @return void
+	 */
+	public static function clear()
+	{
+		self::$routes 	= array();
+		self::$names 	= array();
+		self::$group 	= null;
 	}
 
 	//--------------------------------------------------------------------

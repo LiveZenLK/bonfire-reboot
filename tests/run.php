@@ -5,15 +5,39 @@
  * there is no filtering of $_POST!!!!
  */
 
-/**
- * Configure your paths here:
- */
+//--------------------------------------------------------------------
+// User Configurable Options
+//--------------------------------------------------------------------
+
+// System Folder Paths
+//
+// Customize these paths if you are using a folder layout other than
+// what is provided by default with Bonfire.
 $folder = realpath(dirname(__FILE__)).'/';
 define('MAIN_PATH', str_replace('tests/', '', $folder));
 define('SIMPLETEST', MAIN_PATH .'src/vendor/simpletest/simpletest/'); // Directory of simpletest
-define('ROOT', MAIN_PATH .'src/public/'); // Directory of codeigniter index.php
-define('TESTS_DIR', MAIN_PATH . 'tests/'); // Directory of your tests.
-define('APP_DIR', MAIN_PATH . 'src/application/'); // CodeIgniter Application directory
+define('ROOT', MAIN_PATH .'src/public/'); 			// Directory of codeigniter index.php
+define('TESTS_DIR', MAIN_PATH . 'tests/'); 			// Directory of your tests.
+define('APP_DIR', MAIN_PATH . 'src/application/'); 	// CodeIgniter Application directory
+define('BF_DIR', MAIN_PATH .'src/bonfire/');			// Bonfire core directory
+
+// Ignore Folders
+//
+// This array contains names of folders, relative to the
+// base 'tests' folder that will be ignored when doing a scan
+// the folders to locate tests.
+//
+//  This can be modified at runtime with to include/exclude app-specific
+//  or Bonfire core folders with the --app_only or -bf_only options on the CLI
+$ignore_folders = array(
+	MAIN_PATH .'tests/vendor'	// No need to test someone else's packages here.
+);
+
+//--------------------------------------------------------------------
+// END User Configurable Values
+//--------------------------------------------------------------------
+// Do not edit below this line unless you know what you are doing.
+//
 
 //do not use autorun as it output ugly report upon no test run
 require_once SIMPLETEST . 'unit_tester.php';
@@ -21,6 +45,16 @@ require_once SIMPLETEST . 'mock_objects.php';
 require_once SIMPLETEST . 'collector.php';
 require_once SIMPLETEST . 'web_tester.php';
 //require_once SIMPLETEST . 'extensions/my_reporter.php';
+
+// Require Mockery
+if (is_file(MAIN_PATH . 'src/vendor/mockery/mockery/library/Mockery.php'))
+{
+	require_once MAIN_PATH . 'src/vendor/mockery/mockery/library/Mockery.php';
+}
+else
+{
+	die('Mockery library not found. Please run "composer upgrade --dev" to install.');
+}
 
 //Capture CodeIgniter output, discard and load system into $ci variable
 ob_start();
@@ -253,9 +287,21 @@ function memory_usage()
  */
 function discover_tests($start_folder=null)
 {
+	global $ignore_folders;
+	$files = array();
+
+	// If no start folder exists, we'll
+	// set it manually to our tests root
 	if (is_null($start_folder))
 	{
 		$start_folder = TESTS_DIR;
+	}
+
+	// If this is one of the ignore folders
+	// simply return an empty array.
+	if (in_array($start_folder, $ignore_folders))
+	{
+		return array();
 	}
 
 	$start_folder = rtrim($start_folder, '/');
@@ -265,8 +311,6 @@ function discover_tests($start_folder=null)
 		global $ci;
 		$ci->load->helper('directory');
 	}
-
-	$files = array();
 
 	$folders = directory_map($start_folder, 1);
 
@@ -299,7 +343,7 @@ function discover_tests($start_folder=null)
 }
 
 //--------------------------------------------------------------------
-// TEST UTILITY FUNCTIONS
+// END UTILITY FUNCTIONS
 //--------------------------------------------------------------------
 
 
@@ -318,6 +362,33 @@ error_reporting(0);
 // Are we running in cli mode?
 $is_cli = setup_cli($argv);
 
+
+if ($is_cli)
+{
+	// Setup our allowed short/long options
+	$short_opts  = '';
+	$short_opts .= 'a';			// Include the applications folder tests only. Not Bonfire core.
+	$short_opts .= 'b';			// Include Bonfire's core tests only, not the app-specific ones.
+
+	$long_opts  = array(
+		'app_only',				// Include the applications folder tests only. Not Bonfire core.
+		'bf_only',				// Include Bonfire's core tests only, not the app-specific ones.
+	);
+
+	$cli_opts = getopt($short_opts, $long_opts);
+
+	// If we are on an app_only or bf_only run,
+	// then add the folders to the ignored folders
+	if (array_key_exists('a', $cli_opts) || array_key_exists('app_only', $cli_opts))
+	{
+		$ignore_folders[] = str_replace('src', 'tests', BF_DIR);
+	}
+	else if (array_key_exists('b', $cli_opts) || array_key_exists('bf_only', $cli_opts))
+	{
+		$ignore_folders[] = str_replace('src', 'tests', APP_DIR);
+	}
+}
+
 $test_suite = new TestSuite();
 $test_suite->_label = 'Bonfire Test Suite';
 
@@ -326,8 +397,12 @@ $test_suite->_label = 'Bonfire Test Suite';
 // of the tests that we can discover.
 $run_all = FALSE;
 
-if ($is_cli && !count($args))
+if ($is_cli)
 {
+	// Was there an --app_only flag or --bonfire_only flag passed?
+	// If so, we'll still count it as run_all, but we want to skip
+	// the folders...
+
 	$run_all = TRUE;
 }
 else if (isset($_GET['all']) || isset($_POST['all']))
@@ -378,12 +453,14 @@ if (is_array($test_files))
 
 
 //variables for report
+/*
 $controllers = map_tests(TESTS_DIR . 'controllers');
 $models = map_tests(TESTS_DIR . 'models');
 $views = map_tests(TESTS_DIR . 'views');
 $libraries = map_tests(TESTS_DIR . 'libraries');
 $bugs = map_tests(TESTS_DIR . 'bugs');
 $helpers = map_tests(TESTS_DIR . 'helpers');
+*/
 $form_url =  'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 
 $test_end = microtime();

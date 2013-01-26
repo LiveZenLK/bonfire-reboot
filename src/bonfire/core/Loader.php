@@ -158,9 +158,9 @@ class CI_Loader {
 	public function __construct()
 	{
 		$this->_ci_ob_level  = ob_get_level();
-		$this->_ci_library_paths = array(APPPATH, BASEPATH);
-		$this->_ci_helper_paths = array(APPPATH, BASEPATH);
-		$this->_ci_model_paths = array(APPPATH);
+		$this->_ci_library_paths = array(APPPATH, BFPATH, BASEPATH);
+		$this->_ci_helper_paths = array(APPPATH, BFPATH, BASEPATH);
+		$this->_ci_model_paths = array(APPPATH, BFPATH);
 		$this->_ci_view_paths = array(APPPATH.'views/'	=> TRUE);
 
 		// Get current module from the router
@@ -723,7 +723,47 @@ class CI_Loader {
 	}
 
     //--------------------------------------------------------------------
-    //
+
+	/**
+	 * Adds a path to the list of views that are searched for. Makes it simpler
+	 * for the rendering engine.
+	 *
+	 * Unlike 'package paths', this does not require the view path to actually
+	 * end in 'views/'.
+	 *
+	 * @param string  $path         The full server path to look into.
+	 * @param boolean $view_cascade [description]
+	 */
+	public function add_view_path($path, $view_cascade=TRUE)
+	{
+		$path = rtrim($path, '/').'/';
+
+		if (!isset($this->_ci_view_paths[$path]) )
+		{
+			$this->_ci_view_paths = array($path => $view_cascade) + $this->_ci_view_paths;
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Removes an arbitrary view path from the view arrays.
+	 *
+	 * @param  string $path The path to remove
+	 * @return [type]       [description]
+	 */
+	public function remove_view_path($path)
+	{
+		$path = rtrim($path, '/').'/';
+
+		if (isset($this->_ci_view_paths[$path]))
+		{
+			unset($this->_ci_view_paths[$path]);
+		}
+	}
+
+	//--------------------------------------------------------------------
+
     //--------------------------------------------------------------------
     // ORIGINAL CI METHODS
     //--------------------------------------------------------------------
@@ -1097,6 +1137,7 @@ class CI_Loader {
 			if (file_exists($bf_helper))
 			{
 				include_once($bf_helper);
+				return;
 			}
 
 			// unable to load the helper

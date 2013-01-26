@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * Bonfire requires PHP 5.3+
+ */
+if (version_compare(PHP_VERSION, '5.3.0', '<'))
+{
+	die('Bonfire requires PHP 5.3.0 or higher. You are currently using version '. PHP_VERSION);
+}
+
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT

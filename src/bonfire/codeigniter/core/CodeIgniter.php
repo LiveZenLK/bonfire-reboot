@@ -233,6 +233,12 @@
 		return CI_Controller::get_instance();
 	}
 
+	// start BONFIRE modifications
+	if (file_exists(BFPATH.'core/BF_Controller.php'))
+	{
+		require BFPATH.'core/BF_Controller.php';
+	}
+	// end BONFIRE modifications
 
 	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
 	{

@@ -1,0 +1,9 @@
+ ☐ Modify Template library to support multiple messages at once.
+ ☐ Modify Template Library to support multiple yields and content_for...
+ ☐ Create new Notices library to take the place of the Template::message() features.
+
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+ ✔ Remove parent/child capabilities from Template library to reduce the number of file calls we're making. @done (13-01-25 22:36)
+ ✔ Create a basic autoloader for certain of our libraries, like Assets, Templates, etc. This will ease coding while not kill performance. @done (13-01-25 22:36)

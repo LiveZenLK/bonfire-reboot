@@ -123,7 +123,7 @@ class Template
 	 *
 	 * @var array
 	 */
-	public static $blocks = array();
+	public static $blocks;
 
 
 	/**
@@ -241,6 +241,7 @@ class Template
 		self::$parse_views		= self::$ci->config->item('template.parse_views');
 
 		self::$yields = new stdClass();
+		self::$blocks = new stdClass();
 
 		// Store our orig view path, so we can reset it
 		//self::$orig_view_path = self::$ci->load->_ci_view_path;
@@ -406,7 +407,7 @@ class Template
 	{
 		if (!empty($block_name))
 		{
-			self::$blocks[$block_name] = $view_name;
+			self::$blocks->$block_name = $view_name;
 		}
 
 	}//end set_block()
@@ -448,9 +449,9 @@ class Template
 		}
 
 		// If a block has been set previously use that
-		if (isset(self::$blocks[$block_name]))
+		if (isset(self::$blocks->$block_name))
 		{
-			$block_name = self::$blocks[$block_name];
+			$block_name = self::$blocks->$block_name;
 		}
 		// Otherwise, use the default view.
 		else

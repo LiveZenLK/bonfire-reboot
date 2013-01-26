@@ -8,6 +8,16 @@ A few small changes have been made to the main <tt>index.php</tt> file that ship
 
 A new constant, <tt>BFPATH</tt>, is available that points to the root of Bonfire's specific code. By default this is <tt>/bonfire/</tt>.
 
+## Codeigniter.php
+
+The <tt>BF_Controller</tt> file is loaded just before the MY_Controller class would be loaded so that it's available to be extended by application files. Around line 236
+
+    // start BONFIRE modifications
+	if (file_exists(BFPATH.'core/BF_Controller.php'))
+	{
+		require BFPATH.'core/BF_Controller.php';
+	}
+	// end BONFIRE modifications
 
 ## Common.php
 

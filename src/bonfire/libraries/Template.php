@@ -21,7 +21,7 @@
  * The Template class makes the creation of consistently themed web pages across your
  * entire site simple and as automatic as possible.
  *
- * It supports parent/child themes, controller-named automatic overrides, and more.
+ * It supports controller-named automatic overrides, and more.
  *
  * @package    Bonfire
  * @subpackage Libraries
@@ -732,6 +732,8 @@ class Template
 	 * because you don't always want to have to refresh the page to get the
 	 * message to show up.
 	 *
+	 *  NOTE: This feature is deprecated as of version 1.0.
+	 *
 	 * @access public
 	 * @static
 	 *
@@ -775,6 +777,8 @@ class Template
 	 * If data exists in 'message' session flashdata, that will
 	 * override any other messages. The renders the message based
 	 * on the template provided in the config file ('OCU_message_template').
+	 *
+	 * NOTE: This feature is deprecated as of version 1.0.
 	 *
 	 * @access public
 	 * @static

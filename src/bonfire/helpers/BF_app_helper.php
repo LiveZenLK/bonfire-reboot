@@ -11,7 +11,7 @@ define('BONFIRE_VERSION', '1.0-dev');
 //
 function bf_autoloader($class)
 {
-	$supported_libs = array('Template', 'Assets');
+	$supported_libs = array('Template', 'Assets', 'BF_Notices');
 
 	if (!in_array($class, $supported_libs))
 	{

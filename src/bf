@@ -1,0 +1,34 @@
+!#/usr/bin/env php
+<?php
+
+//--------------------------------------------------------------------
+// USER CONFIGURABLE OPTIONS
+//--------------------------------------------------------------------
+
+// System Folder Paths
+//--------------------------------------------------------------------
+// Feel free to modify these to suit the needs of your system and
+// application-specific layout. These just tell use where to find things.
+//
+	define('MAIN_PATH', realpath(dirname(__FILE__)).'/');
+	define('ROOT', MAIN_PATH .'public/'); 			// Directory of codeigniter index.php
+	define('APP_DIR', MAIN_PATH . 'application/'); 	// CodeIgniter Application directory
+	define('BF_DIR', MAIN_PATH .'bonfire/');			// Bonfire core directory
+
+//--------------------------------------------------------------------
+// END USER CONFIGURABLE OPTIONS
+//--------------------------------------------------------------------
+
+
+//Capture CodeIgniter output, discard and load system into $ci variable
+ob_start();
+	include(ROOT . 'index.php');
+	$ci =& get_instance();
+ob_end_clean();
+
+// Load our CLI library
+$ci->load->library('BF_CLI');
+
+// Start the CLI goodness!
+$ci->bf_cli->start();
+

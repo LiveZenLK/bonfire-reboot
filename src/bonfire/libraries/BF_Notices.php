@@ -16,9 +16,6 @@
 
 //--------------------------------------------------------------------
 
-define('NOTICE_SORT_ASC', 0);
-define('NOTICE_SORT_DESC', 1);
-
 /**
  * Notices - Session based notifications
  *
@@ -118,6 +115,8 @@ class BF_Notices {
 		if (is_array(self::$groups))
 		{
 			$notices = self::$groups;
+
+			return $notices;
 		}
 
 		return NULL;
@@ -192,11 +191,14 @@ class BF_Notices {
 			$group = 'general';
 		}
 
-		// Make sure the group
+		// Make sure the group exists
 		if (!isset(self::$groups[$group]))
 		{
-			self::$groups[$group] = 1;
+			self::$groups[$group] = 0;
 		}
+
+		// Increment the count for the group
+		self::$groups[$group]++;
 
 		self::$notices[] = array(
 			'time'		=> time(),
@@ -256,7 +258,7 @@ class BF_Notices {
 	 * @param  [type] $dir     [description]
 	 * @return [type]          [description]
 	 */
-	public static function sort($sort_by='time', $dir=NOTICE_SORT_DESC)
+	public static function sort($sort_by='time', $dir='asc')
 	{
 		self::$sort_by	= $sort_by;
 		self::$sort_dir	= $dir;

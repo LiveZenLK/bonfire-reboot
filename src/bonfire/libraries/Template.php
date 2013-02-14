@@ -356,6 +356,37 @@ class Template {
 	//--------------------------------------------------------------------
 
 	/**
+	 * Returns the full url to a file in the currently active theme.
+	 *
+	 * @param string $resource Path to a resource in the theme
+	 *
+	 * @return string The full url (including http://) to the resource.
+	 */
+	public static function url($resource='')
+	{
+		$url = base_url();
+
+		foreach (self::$template_paths as $path)
+		{
+			if (is_dir(FCPATH . $path .'/'. self::$theme))
+			{
+				$url .= $path .'/'. self::$theme .'/';
+				break;
+			}
+		}
+
+		// Cleanup, just to be safe
+		$url = str_replace('//', '/', $url);
+		$url = str_replace(':/', '://', $url);
+
+		return $url . $resource;
+
+	}//end theme_url()
+
+	//--------------------------------------------------------------------
+
+
+	/**
 	 * Handles the simple task of loading in a view file. If it is not themed
 	 * we will simply use CI's built in load->view() method to take advantage of
 	 * the module locations. If it's themed, though, we'll load it ourselves

@@ -357,7 +357,7 @@ if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST")
 }
 
 // Make sure we have plenty of time to run the tests.
-error_reporting(0);
+error_reporting(E_ALL ^ E_NOTICE);
 
 // Are we running in cli mode?
 $is_cli = setup_cli($argv);

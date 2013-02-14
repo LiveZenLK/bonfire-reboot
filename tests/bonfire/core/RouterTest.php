@@ -317,7 +317,7 @@ class RouterTest extends CI_UnitTestCase {
 	{
 		Route::with_name('profile', 'users/profile');
 
-		$this->assertEqual(Route::named_url('profile'), null);
+		$this->assertEqual(Route::named_url('profile'), 'users/profile');
 	}
 
 	//--------------------------------------------------------------------

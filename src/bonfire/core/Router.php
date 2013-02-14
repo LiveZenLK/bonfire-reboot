@@ -565,12 +565,19 @@ class CI_Router {
 			return array_slice($segments, 1);
 		}
 
+		// Bonfire Controller?
+		if (is_file(BFPATH .'controllers/'. $module .'.php'))
+		{
+			return $segments;
+		}
+
 		// Default controller?
 		if (is_file(APPPATH . 'controllers/' . $module . '/' . $this->default_controller . '.php'))
 		{
 			$segments[0] = $this->default_controller;
 			return $segments;
 		}
+
 	}
 
 	//--------------------------------------------------------------------
@@ -829,9 +836,9 @@ class Route {
 			$ci->load->helper('url');
 		}
 
-		if (array_key_exists($name, self::$names[$name]))
+		if (!empty($name) && isset(self::$names[$name]))
 		{
-			return site_url(self::$names[$name]);
+			return self::$names[$name];
 		}
 
 		return NULL;

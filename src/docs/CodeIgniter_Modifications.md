@@ -19,6 +19,8 @@ The <tt>BF_Controller</tt> file is loaded just before the MY_Controller class wo
 	}
 	// end BONFIRE modifications
 
+We load the controller from the APPPATH just like normal, but if that file isn't found, we attempt to load a controller from BFPATH instead.
+
 ## Common.php
 
 The <tt>load_class()</tt> method has been modified to allow it to search for core files not only in the Codeigniter folder and the application folder, but also in the bonfire folder. To allow graceful overriding in the application, the path is first searched in APPPATH, then BFPATH, then BASEPATH.

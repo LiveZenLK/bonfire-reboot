@@ -208,10 +208,10 @@ class BF_Notices {
 		);
 
 		// Make sure we always keep the session updated for future calls.
-		if (isset(self::$ci->session))
+		if (class_exists('CI_Session'))
 		{
-			self::$ci->session->set_userdata('bf_notice_groups', self::$groups);
-			self::$ci->session->set_userdata('bf_notices', self::$notices);
+			@self::$ci->session->set_userdata('bf_notice_groups', self::$groups);
+			@self::$ci->session->set_userdata('bf_notices', self::$notices);
 		}
 	}
 

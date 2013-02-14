@@ -118,7 +118,111 @@ class Template {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Saves the content between the tag and the end_content_for() so that
+	 * it can be inserted into the layouts via a yield($name) method.
+	 *
+	 * @param  string $name The name to reference this content by.
+	 * @return voic
+	 */
+	public static function content_for($name)
+	{
+		// Make sure it's not a reserved name!
+		if ($name == 'tpl_content')
+		{
+			show_error('content_for method cannot use "tpl_content" as its name.');
+		}
 
+		// Create a placeholder in the yields array
+		self::$yields->$name = '';
+
+		ob_start();
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Ends the content_for block and stores the information for the layout.
+	 *
+	 * @param  string $name The name to match with the opening content_for tag.
+	 * @return void
+	 */
+	public static function end_content_for($name)
+	{
+		// We can only save if we've started it before.
+		// Not 100% why I'm choosing to do it this way,
+		// but I guess it's providing another level of security checks?
+		if (isset(self::$yields->$name))
+		{
+			// Grab the output so that we don't screw up our buffering levels.
+			$buffer = ob_get_contents();
+			ob_end_clean();
+
+			self::$yields->$name = $buffer;
+		}
+
+
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Stores the block named $name in the blocks array for later rendering.
+	 * The $current_view variable is the name of an existing view. If it is empty,
+	 * your script should still function as normal.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @param string $block_name The name of the block. Must match the name in the block() method.
+	 * @param string $view_name  The name of the view file to render.
+	 *
+	 * @return void
+	 */
+	public static function set_block($block_name='', $view_name='')
+	{
+		if (!empty($block_name))
+		{
+			self::$blocks->$block_name = $view_name;
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Renders a "block" to the view.
+	 *
+	 * A block is a partial view contained in a view file in the
+	 * application/views folder. It can be used for sidebars,
+	 * headers, footers, or any other recurring element within
+	 * a site. It is recommended to set a default when calling
+	 * this function within a layout. The default will be rendered
+	 * if no methods override the view (using the set_block() method).
+	 *
+	 * @param string $block_name   The name of the block to render.
+	 * @param string $default_view The view to render if no other view has been set with the set_block() method.
+	 * @param array  $data         An array of data to pass to the view.
+	 * @param bool   $themed       Whether we should look in the themes or standard view locations.
+	 *
+	 * @return void
+	 */
+	public static function block($block_name='', $default_view='', $data=array(), $themed=FALSE)
+	{
+		// If a block has been set previously use that
+		if (isset(self::$blocks->$block_name))
+		{
+			$block_name = self::$blocks->$block_name;
+		}
+		// Otherwise, use the default view.
+		else
+		{
+			$block_name = $default_view;
+		}
+
+		return self::load_view($block_name, $data, $themed);
+	}
+
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	// Utility Methods
@@ -223,4 +327,48 @@ class Template {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Like CodeIgniter redirect(), but uses javascript if needed
+	 * to redirect out of an ajax request.
+	 *
+	 * @param string $url The url to redirect to. If not a full url, will wrap it in site_url().
+	 *
+	 * @return void
+	 */
+	public static function redirect($url=NULL)
+	{
+		if ( ! preg_match('#^https?://#i', $url))
+		{
+			$url = site_url($url);
+		}
+
+		if (!self::$ci->input->is_ajax_request())
+		{
+			header("Location: ".$url);
+
+			// A full HTML document requires certain elements to
+			// be considered valid.  We don't return any content,
+			// so override the default header which specifies HTML.
+			header("Content-Type: text/plain");
+		}
+		else
+		{
+			// Output URL somewhere where we know how to escape it safely
+			echo '<div id="url" data-url="';
+			e($url);
+			echo '"></div>';
+
+			// then JS can grab it
+			echo <<<EOF
+<script>
+window.location = document.getElementById('url').getAttribute('data-url');
+</script>
+EOF;
+		}
+
+		exit();
+
+	}
+
+	//--------------------------------------------------------------------
 }

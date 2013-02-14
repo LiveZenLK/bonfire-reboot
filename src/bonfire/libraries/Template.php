@@ -284,6 +284,78 @@ class Template {
 	//--------------------------------------------------------------------
 
 	/**
+	 * Theme paths allow you to have multiple locations for themes to be
+	 * stored. This might be used for separating themes for different sub-
+	 * applications, or a core theme and user-submitted themes.
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @param string $path A new path where themes can be found.
+	 *
+	 * @return bool
+	 */
+	public static function add_theme_path($path=NULL)
+	{
+		if (empty($path) || !is_string($path))
+		{
+			return FALSE;
+		}
+
+		// Make sure the path has a '/' at the end.
+		if (substr($path, -1) != '/')
+		{
+			$path .= '/';
+		}
+
+		// If the path already exists, we're done here.
+		if (isset(self::$theme_paths[$path]))
+		{
+			return TRUE;
+		}
+
+		// Make sure the folder actually exists
+		if (is_dir(FCPATH . $path))
+		{
+			array_push(self::$theme_paths, $path);
+			return FALSE;
+		}
+		else
+		{
+			return FALSE;
+		}
+
+	}//end add_theme_path()
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Remove the theme path
+	 *
+	 * @access public
+	 * @static
+	 *
+	 * @param string $path The path to remove from the theme paths.
+	 *
+	 * @return void
+	 */
+	public static function remove_theme_path($path=NULL)
+	{
+		if (empty($path) || !is_string($path))
+		{
+			return;
+		}
+
+		if (isset(self::$theme_paths[$path]))
+		{
+			unset(self::$theme_paths[$path]);
+		}
+
+	}//end remove_theme_path()
+
+	//--------------------------------------------------------------------
+
+	/**
 	 * Handles the simple task of loading in a view file. If it is not themed
 	 * we will simply use CI's built in load->view() method to take advantage of
 	 * the module locations. If it's themed, though, we'll load it ourselves

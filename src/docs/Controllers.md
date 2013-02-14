@@ -146,5 +146,19 @@ $this->get_json();
 
 The first parameter allows you to specify the format of the data you would like returned. Valid options are 'object' (default), or 'array'. The second parameter allows you to limit the number of levels deep within the object you wish to decode. Default is the maximum value of 512 levels deep.
 
+## 5 Caching
 
+BF_Controller will always load up the cache driver so it's ready for use throughout your application. You should consider using the cache driver where appropriate throughout your application, even if you don't think you need to worry about caching at this point. That way, should you find a need for caching down the line, it will already be in place and you only need to change the caching type in your controller.
 
+Bonfire defaults to loading the <tt>dummy</tt> cache driver, with a <tt>file</tt> cache backup. This means that, throughout development, the cache driver will be loaded and ready for use, but nothing will ever be cached. When you find that you need caching, you have two simple class properties that you can specify in your controllers to set it up for you.
+
+```html+php
+class Some_Controller extends BF_Controller {
+
+	protected $cache_type  	= 'apc';
+	protected $backup_cache = 'file';
+
+}
+```
+
+The <tt>$cache_type</tt> var specifies the primary cache driver to use. The <tt>$backup_cache</tt> specifies which driver to use when that driver is not available (like memcached crashed, etc.).

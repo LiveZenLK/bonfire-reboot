@@ -1,10 +1,9 @@
-<?php echo theme_view('parts/_header'); ?>
+<?php echo Template::load_view('header', true); ?>
 
-<div class="container body narrow-body"> <!-- Start of Main Container -->
+<div id="container">
+	<?php echo Template::yield(); ?>
 
-<?php
-	echo Template::yield('testing');
-	echo Template::yield();
-?>
+	<p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
+</div>
 
-<?php echo theme_view('parts/_footer'); ?>
+<?php echo Template::load_view('footer', true); ?>

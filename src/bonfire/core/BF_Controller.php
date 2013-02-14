@@ -2,9 +2,20 @@
 
 class BF_Controller extends CI_Controller {
 
+	/**
+	 * The type of caching to use. By default it's 'dummy',
+	 * which doesn't actually do anything. :)
+	 */
+	protected $cache_type = 'dummy';
+	protected $backup_cache = 'file';
+
 	public function __construct()
 	{
 		parent::__construct();
+
+		// Make sure that caching is ALWAYS available throughout the app
+		// though it defaults to 'dummy' which won't actually cache.
+		$this->load->driver('cache', array('adapter' => $this->cache_type, 'backup' => $this->backup_cache));
 	}
 
 	//--------------------------------------------------------------------
@@ -22,17 +33,14 @@ class BF_Controller extends CI_Controller {
 	 */
 	protected function render($layout=null, $data=null, $return_output=false)
 	{
-		if (!class_exists('Template'))
-		{
-			//$this->load->library('Template');
-		}
-
 		// Make sure to pass along any data if we have it.
 		if (!is_null($data))
 		{
 			Template::set($data);
 		}
-		Template::render($layout, $return_output);
+
+		// Render it!
+		$this->output->set_output( Template::render($layout, $return_output) );
 	}
 
 	//--------------------------------------------------------------------

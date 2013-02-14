@@ -46,7 +46,7 @@ $config['template.default_layout'] = "index";
 | when 'template.use_mobile_themes' is set to TRUE.
 |
 */
-$config['template.default_theme']	= 'default/';
+$config['template.default_theme']	= 'default';
 
 
 /*

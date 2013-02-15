@@ -79,6 +79,13 @@ class Template {
 		$output = '';
 
 		$view = self::$ci->router->fetch_class() . '/' . self::$ci->router->fetch_method();
+
+		$module = self::$ci->router->fetch_module();
+		if (!empty($module))
+		{
+			$view = $module .'/'. $view;
+		}
+
 		$layout = empty($layout) ? self::$layout : $layout;
 
 		// Grab our main view first so that we can support multiple yields

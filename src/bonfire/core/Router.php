@@ -749,6 +749,9 @@ class Route {
 	// Used for grouping routes together.
 	public static $group 	= null;
 
+	// Holds the 'areas' of the site.
+	public static $areas	= array();
+
 	//--------------------------------------------------------------------
 
 	/**
@@ -1009,6 +1012,26 @@ class Route {
 	//--------------------------------------------------------------------
 
 	/**
+	 * Lets the system know about different 'areas' within the site, like
+	 * the admin area, that maps to certain controllers.
+	 *
+	 * @param  string $area       The name of the area.
+	 * @param  string $controller The controller name to look for.
+	 */
+	public static function area($area, $controller)
+	{
+		// Save the area so we can recognize it later.
+		self::$areas[$area] = $controller;
+
+		// Create routes for this area.
+		self::create($area .'/(:any)/(:any)', '$1/'. $controller .'/$2');
+		self::create($area .'/(:any)', '$1/'. $controller);
+	}
+
+	//--------------------------------------------------------------------
+
+
+	/**
 	 * Empties all named and un-named routes from the system.
 	 *
 	 * @return void
@@ -1018,6 +1041,7 @@ class Route {
 		self::$routes 	= array();
 		self::$names 	= array();
 		self::$group 	= null;
+		self::$areas 	= array();
 	}
 
 	//--------------------------------------------------------------------

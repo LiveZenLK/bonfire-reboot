@@ -1,0 +1,224 @@
+body {
+	background: #cdccc8;
+}
+
+h1 {
+	font-size: 30px;
+	line-height: 40px;
+	margin: 0;
+}
+h2 {
+	font-size: 24px;
+	line-height: 36px;
+	margin-top: 0;
+}
+h3 {
+	font-size: 22px;
+	font-weight: normal;
+	margin-top: 0;
+}
+h4, h5 {
+	text-transform: uppercase;
+	font-weight: 300;
+}
+h4 { font-size: 18px;}
+h5 {
+	font-size: 14px;
+}
+.header {
+	border-bottom: 1px solid #ccc;
+	padding-bottom: 10px;
+	margin-bottom: 20px;
+}
+.well {
+	background: #e1e0dc;
+	border-color: #ccc;
+	padding: 15px;
+}
+.light-well {
+	background: #fff;
+	border-color: #ddd;
+}
+
+/*
+	Basic Structure
+ */
+body > footer {
+	padding: 20px 0;
+}
+#navmain {
+
+}
+#navmain .navbar-inner {
+	background: #e1e0dc;
+	border-bottom: 1px solid #c1c0ac;
+}
+.content, .alt-content {
+	background: #f4f3ef;
+	border-bottom: 1px solid #c4c3bf;
+	padding: 20px 0;
+}
+.alt-content {
+	background: #ecebe7;
+}
+
+/*
+	Intro Boxes
+ */
+.intro {
+	background: #e8eced;
+	border-bottom: 1px solid #c8cccd;
+	padding: 15px 0;
+	color: #888;
+	font-weight: lighter;
+}
+.intro h1 {
+	color: #444;
+}
+
+
+/*
+	Helpers
+ */
+.small {
+	font-size: 85%;
+	font-weight: lighter;
+	color: #777;
+}
+
+/*
+	Cartons
+ */
+.carton {
+	border-right: 1px solid #ccc;
+	margin-right: -1px;
+	display: table-column;
+}
+.row .carton:last-child {
+	border-right: none;
+}
+
+/*
+	Stats
+ */
+.stat-table .value {
+	font-size: 21px;
+	font-weight: 600;
+}
+.stat-table .full {
+	color: #666;
+	font-size: 13px;
+}
+
+ul.stat-list { margin: 0; }
+ul.stat-list li { list-style-type: none; }
+ul.stat-list li label, ul.stat-list li h4, ul.stat-list li small, ul.stat-list li p { display: inline-block; }
+ul.stat-list li label {
+	height: 32px;
+	width: 32px;
+	border-radius: 2px;
+	text-align: center;
+	vertical-align: middle;
+	margin-right: 10px;
+}
+ul.stat-list li label i { margin-top: 8px; }
+ul.stat-list li h4 {
+	font-weight: 600;
+	margin-right: 10px;
+	min-width: 30px;
+}
+ul.stat-list li h4.sub {
+	color: #999;
+	font-weight: 300;
+}
+
+.stats { text-align: center; color: #fff; }
+.stats .stat {
+	background: #e1e0dc;
+	color: #444;
+	padding: 10px;
+	border-radius: 5px;
+	margin-bottom: 20px;
+	text-align: center;
+}
+.stats .stat h2 {
+	font-size: 32px;
+	line-height: 40px;
+	font-weight: 600;
+}
+.stats .stat h6 {
+	margin-top: -10px;
+	text-transform: uppercase;
+	font-weight: 300;
+	font-size: 12px;
+}
+
+.info, .btn-info { background: #3a87ad !important; color: #fff !important; }
+.success, .btn-success { background: #468847 !important; color: #fff !important; }
+.danger, .btn-danger { background: #b94a48 !important; color: #fff !important; }
+.warning, .btn-warning { background: #f89406 !important; color: #fff !important; }
+.inverse, .btn-inverse { background: #333 !important; color: #fff !important; }
+
+.btn-primary { background: #04c !important; }
+.btn-info, .btn-success, .btn-danger, .btn-warning, .btn-inverse, .btn-primary { border: none; }
+.btn {
+	background: #e1e0dc;
+	border: 1px solid #ccc;
+}
+/*
+	Filters
+ */
+.filters span { color: #999; }
+.filters input[type="checkbox"] {
+	float: left;
+	margin-right: 10px;
+}
+.filters h5 {
+	margin-top: 20px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid #ccc;
+}
+
+/*
+	Stream
+ */
+.stream .item {
+	border-bottom: 1px solid #ccc;
+	padding: 10px 0 10px 60px;
+}
+.stream .item .avatar {
+	border-radius: 5px;
+	margin-left: -40px;
+	margin-bottom: -40px;
+	height: 40px;
+	position: relative;
+	top: 15px;
+	right: 20px;
+	float: left;
+}
+.stream .item p.date {
+	padding: 0;
+	float: right;
+	margin-top: 10px;
+}
+.stream .item h4 {
+	margin-bottom: 6px;
+}
+.stream .item .stream-icon {
+	display: inline-block;
+	background: #e1e0dc;
+	border-radius: 5px;
+	height: 40px;
+	width: 40px;
+	text-align: center;
+	margin-left: -40px;
+	margin-bottom: -40px;
+	position: relative;
+	top: 15px;
+	right: 20px;
+	float: left;
+}
+.stream .item .stream-icon i {
+	margin-top: 11px;
+}
+

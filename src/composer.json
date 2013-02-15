@@ -14,6 +14,9 @@
 		"wiki": "https://github.com/ci-bonfire/Bonfire/wiki",
 		"source": "https://github.com/ci-bonfire/Bonfire"
 	},
+	"require": {
+		"php": ">=5.3.0"
+	},
 	"require-dev":	{
 		"mockery/mockery": ">=0.7.2",
 		"simpletest/simpletest": "1.1.*"
@@ -30,5 +33,6 @@
 				}
 			}
 		}
-	]
+	],
+	"minimum-stability": "dev"
 }

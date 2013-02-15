@@ -222,3 +222,42 @@ ul.stat-list li h4.sub {
 	margin-top: 11px;
 }
 
+/*
+	Help Page
+ */
+.page {
+	background: #fff;
+	border: 1px solid #ccc;
+	padding: 30px;
+	font-size: 16px;
+	box-shadow: 0 1px 10px rgba(0, 0, 0, 0.2);
+	color: #555;
+}
+.page header {
+	font-size: 18px;
+	margin-bottom: 20px;
+	font-weight: 700;
+	border-bottom: 1px solid #ddd;
+	padding-bottom: 20px;
+}
+.page .sidebar {
+	border-right: 1px solid #eee;
+}
+.page .sidebar h3 {
+	font-size: 13pt;
+	line-height: 1.6;
+	margin: 0;
+	font-weight: 300;
+}
+.page .sidebar a:link {
+	display: block;
+	font-size: 10pt;
+	line-height: 1.5;
+	color: #349dc7;
+	font-weight: lighter;
+}
+.page .sidebar a:visited {
+	color: #999;
+}
+
+

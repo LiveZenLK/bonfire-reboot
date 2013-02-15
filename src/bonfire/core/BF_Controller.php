@@ -9,6 +9,8 @@ class BF_Controller extends CI_Controller {
 	protected $cache_type = 'dummy';
 	protected $backup_cache = 'file';
 
+	protected $theme = null;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -37,6 +39,12 @@ class BF_Controller extends CI_Controller {
 		if (!is_null($data))
 		{
 			Template::set($data);
+		}
+
+		// Are we specifying a theme other than the default?
+		if (!empty($this->theme))
+		{
+			Template::set_theme($this->theme);
 		}
 
 		// Render it!

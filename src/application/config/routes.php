@@ -41,15 +41,9 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 
-Route::named('profile', 'users/profile');
+// Map all /admin/* methods to the module's admin controller.
+Route::area('admin', 'admin');
 
-Route::resources('users', array('module'=>'roles', 'controller'=>'roles'));
-
-Route::group('admin', function() {
-
-		Route::resources('users', array('constraint' => '(:num)'));
-	}
-);
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

@@ -682,6 +682,7 @@ class CI_Loader {
     private function detect_module($class)
     {
 		$class = str_replace('.php', '', trim($class, '/'));
+
 		if (($first_slash = strpos($class, '/')) !== FALSE)
 		{
 			$module = substr($class, 0, $first_slash);
@@ -691,6 +692,17 @@ class CI_Loader {
 			if ($this->find_module($module))
 			{
 				return array($module, $class);
+			}
+			else
+			{
+				// Use the routers' module... might make more sense
+				// to just do this anyway...
+				$router_module =  get_instance()->router->fetch_module();
+
+				if ($this->find_module($router_module))
+				{
+					return array($router_module, $module);
+				}
 			}
 		}
 

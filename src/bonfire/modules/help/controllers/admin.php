@@ -80,7 +80,7 @@ class Admin extends BF_Controller {
 		// Determine out page name
 		$ar = explode('/', $page);
 
-		Template::set('page_content_title', end($ar));
+		Template::set('page_content_title', str_replace('_', ' ', end($ar)));
 
 		return $output;
 	}

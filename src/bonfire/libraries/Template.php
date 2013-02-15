@@ -407,7 +407,7 @@ class Template {
 	{
 		if (!$themed)
 		{
-			return self::$ci->load->view($filename, null, true);
+			return self::$ci->load->view($filename, self::$data, true);
 		}
 
 		foreach (self::$template_paths as $path)

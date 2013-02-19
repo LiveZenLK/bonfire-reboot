@@ -49,18 +49,35 @@ $config['template.default_layout'] = "index";
 $config['template.default_theme']	= 'default';
 
 
+
+
+//--------------------------------------------------------------------
+// ASSETS
+//--------------------------------------------------------------------
+
 /*
 |--------------------------------------------------------------------
-| ALLOW CONTROLLER BASED VIEWS
+| Asset Pipeline
 |--------------------------------------------------------------------
-| If set to TRUE, Bonfire will search for theme layouts in files
-| with names that match the name of the controller, before trying
-| the index.php layout.
+| When TRUE the full Asset Pipeline will be in play, which includes
+| compiling, joining, and minifying your assets, like CSS, JS and images.
 |
-| IE - The Books controller would look in the theme for a layout file
-| named books.php.
+| When FALSE, the assets will be served up one at time with no precompilation.
+| This may be more appropriate for smaller or less complex sites, but large
+| applications will benefit from the speed and simplicity of using the Pipeline.
 |
 */
-$config['template.allow_controller_layouts'] = TRUE;
+$config['assets.enabled'] = TRUE;
 
+# Should we compress assets?
+$config['assets.compress'] = TRUE;
 
+# Diplay files as single files?
+$config['assets.debug'] = TRUE;
+
+# Compressors to use
+$config['assets.js_compressor'] 	= 'Minify/JSMin::minify';
+$config['assets.css_compressor']	= 'Minify/Minify_CSS::minify';
+
+# Fallback to assets pipeline if a precompiled  asset is missed?
+$config['assets.compile'] 			= FALSE;

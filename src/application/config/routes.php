@@ -41,9 +41,12 @@
 $route['default_controller'] = "welcome";
 $route['404_override'] = '';
 
+// Work with the Assets Pipeline to change the path that
+// Assets are referenced at. By default, this is the '/assets' folder.
+Route::create('assets/(:any)', 'bf_pipeline/$1');
+
 // Map all /admin/* methods to the module's admin controller.
 Route::area('admin', 'admin');
-
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

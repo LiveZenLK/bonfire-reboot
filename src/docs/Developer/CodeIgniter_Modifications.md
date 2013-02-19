@@ -30,3 +30,10 @@ We also search in the bonfire/ folder for BF_ files. These files are like MY_Mod
 ## Router.php
 
 The Router class has been completely replaced with a modified version that includes ideas and code from segersjens/CodeIgniter-HMVC-Modules and Laravels Router. By replacing the file, we get a slight performance increase, and increased functionality.
+
+## Loader
+
+The Loader class has a lot of changes to it, but most of them are adding in the modules code. However, after that is all said and done, the order of adding views was altered so that the module loaded would take precedence over Bonfire view files.
+
+    // Line 1273 (in add_package_path):
+    $this->_ci_view_paths = $this->_ci_view_paths + array($path.'views/' => $view_cascade);

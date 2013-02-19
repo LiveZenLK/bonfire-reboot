@@ -25,7 +25,7 @@
 					<li>
 						<a href="#">Develop</a>
 					</li>
-					<li><a href="#" id="help-link"><i class="icon icon-question-sign"></i></a></li>
+					<li><a href="<?php echo site_url('/admin/help') ?>" id="help-link"><i class="icon icon-question-sign"></i></a></li>
 				</ul>
 
 			</div>

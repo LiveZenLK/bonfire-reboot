@@ -28,6 +28,11 @@ class Template {
 	protected static $blocks;
 
 	/**
+	 * Stores the user-requested view file to use.
+	 */
+	protected static $view;
+
+	/**
 	 * Stores the data that should be made available to the view.
 	 */
 	protected static $data = array();
@@ -78,7 +83,16 @@ class Template {
 	{
 		$output = '';
 
-		$view = self::$ci->router->fetch_class() . '/' . self::$ci->router->fetch_method();
+		$view = '';
+
+		if (empty(self::$view))
+		{
+			$view = self::$ci->router->fetch_class() . '/' . self::$ci->router->fetch_method();
+		}
+		else
+		{
+			$view = self::$view;
+		}
 
 		$module = self::$ci->router->fetch_module();
 		if (!empty($module))
@@ -289,6 +303,17 @@ class Template {
 	}
 
 	//--------------------------------------------------------------------
+
+	public function set_view($view)
+	{
+		if (!empty($view))
+		{
+			self::$view = $view;
+		}
+	}
+
+	//--------------------------------------------------------------------
+
 
 	/**
 	 * Theme paths allow you to have multiple locations for themes to be

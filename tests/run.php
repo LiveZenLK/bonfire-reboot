@@ -33,6 +33,16 @@ $ignore_folders = array(
 	MAIN_PATH .'tests/vendor'	// No need to test someone else's packages here.
 );
 
+// Only Folder
+//
+// Will only have a value if the -d or --dir flags were used on the CLI
+$only_folder = NULL;
+
+// Only File
+//
+// Will only have a value if the -f or --file flags were used on the CLI
+$only_file = NULL;
+
 //--------------------------------------------------------------------
 // END User Configurable Values
 //--------------------------------------------------------------------
@@ -283,11 +293,13 @@ function memory_usage()
  *
  * @param  string $start_folder The folder to start scanning. If empty, it will
  *                              	be the base of the tests folder.
+ * @param boolean $ignore_onlys If TRUE, will ignore checks for $only_file and $only_folder
+ *                              Primarily used for recursive scans.
  * @return array               The list of test files.
  */
-function discover_tests($start_folder=null)
+function discover_tests($start_folder=null, $ignore_onlys=false)
 {
-	global $ignore_folders;
+	global $ignore_folders, $only_file, $only_folder;
 	$files = array();
 
 	// If no start folder exists, we'll
@@ -305,6 +317,16 @@ function discover_tests($start_folder=null)
 	}
 
 	$start_folder = rtrim($start_folder, '/');
+
+	// Are we restricting to a single file?
+	if ($only_file && !$ignore_onlys)
+	{
+		if (is_file($start_folder .'/'. $only_file))
+		{
+			$files[] = $start_folder .'/'. $only_file;
+			return $files;
+		}
+	}
 
 	if (!function_exists('directory_map'))
 	{
@@ -325,7 +347,7 @@ function discover_tests($start_folder=null)
 			// Merge this array with ours and call it good.
 			if (is_dir($start_folder .'/'. $folder))
 			{
-				$f = discover_tests($start_folder .'/'. $folder);
+				$f = discover_tests($start_folder .'/'. $folder, true);
 				$files = array_merge($files, $f);
 			}
 			else if (is_file($start_folder .'/'. $folder))
@@ -369,10 +391,14 @@ if ($is_cli)
 	$short_opts  = '';
 	$short_opts .= 'a';			// Include the applications folder tests only. Not Bonfire core.
 	$short_opts .= 'b';			// Include Bonfire's core tests only, not the app-specific ones.
+	$short_opts .= 'f:';			// Restrict to a single file
+	$short_opts .= 'd:';			// Restrict to a single folder
 
 	$long_opts  = array(
 		'app_only',				// Include the applications folder tests only. Not Bonfire core.
 		'bf_only',				// Include Bonfire's core tests only, not the app-specific ones.
+		'file:',					// Restrict to a single file
+		'dir:',					// Restrict to a single folder
 	);
 
 	$cli_opts = getopt($short_opts, $long_opts);
@@ -387,29 +413,18 @@ if ($is_cli)
 	{
 		$ignore_folders[] = str_replace('src', 'tests', APP_DIR);
 	}
+	else if (array_key_exists('f', $cli_opts) || array_key_exists('file', $cli_opts) )
+	{
+		$only_file = array_key_exists('file', $cli_opts) ? $cli_opts['file'] : $cli_opts['f'];
+	}
+	else if (array_key_exists('d', $cli_opts) || array_key_exists('dir', $cli_opts) )
+	{
+		$only_folder = array_key_exists('dir', $cli_opts) ? $cli_opts['dir'] : $cli_opts['d'];
+	}
 }
 
 $test_suite = new TestSuite();
 $test_suite->_label = 'Bonfire Test Suite';
-
-// By default, we assume that if no args are present on the
-// CLI, or if no get/post vars are set, we run through all
-// of the tests that we can discover.
-$run_all = FALSE;
-
-if ($is_cli)
-{
-	// Was there an --app_only flag or --bonfire_only flag passed?
-	// If so, we'll still count it as run_all, but we want to skip
-	// the folders...
-
-	$run_all = TRUE;
-}
-else if (isset($_GET['all']) || isset($_POST['all']))
-{
-	$run_all = TRUE;
-}
-
 
 // We destroy the session here so that tests can create
 // their own sessions. This also allows us to not contaminate test
@@ -424,13 +439,8 @@ $test_start = microtime();
 
 $test_files = null;
 
-// Get all main tests
-if ($run_all)
-{
-	$test_files = discover_tests();
-}
 // TODO Revise to allow args from the CLI as folder/file names
-elseif (isset($_POST['test'])) //single test
+if (isset($_POST['test'])) //single test
 {
 	$file = $_POST['test'];
 
@@ -438,6 +448,10 @@ elseif (isset($_POST['test'])) //single test
 	{
 		$test_suite->addFile(TESTS_DIR . $file);
 	}
+}
+else
+{
+	$test_files = discover_tests();
 }
 
 // Add the found test files to the suite to be tested.

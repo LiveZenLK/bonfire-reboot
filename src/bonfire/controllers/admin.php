@@ -2,9 +2,11 @@
 
 class Admin extends BF_Controller {
 
+	protected $theme = 'admin';
+
 	public function index()
 	{
-		die('here');
+		$this->render();
 	}
 
 	//--------------------------------------------------------------------

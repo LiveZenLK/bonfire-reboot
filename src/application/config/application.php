@@ -67,10 +67,10 @@ $config['template.default_theme']	= 'default';
 | applications will benefit from the speed and simplicity of using the Pipeline.
 |
 */
-$config['assets.enabled'] = TRUE;
+$config['assets.enabled'] = FALSE;
 
 # Should we compress assets?
-$config['assets.compress'] = TRUE;
+$config['assets.compress'] = FALSE;
 
 # Diplay files as single files?
 $config['assets.debug'] = TRUE;

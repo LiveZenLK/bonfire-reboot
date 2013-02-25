@@ -15,7 +15,7 @@ class Template {
 	/**
 	 * The folders that we should look in for template-related files.
 	 */
-	protected static $template_paths = array();
+	public static $template_paths = array();
 
 	/**
 	 * Stores the yields as they are built.
@@ -288,6 +288,34 @@ class Template {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Returns the name of the current theme.
+	 *
+	 * @param bool $include_path If TRUE, will include folder information.
+	 *
+	 * @return string
+	 */
+	public function current_theme($include_path=false)
+	{
+		if ($include_path)
+		{
+			foreach (self::$template_paths as $path)
+			{
+				$full = FCPATH . $path .'/'. self::$theme .'/';
+
+				if (is_dir($full))
+				{
+					return $full;
+				}
+			}
+		}
+
+		return rtrim(self::$theme, '/') .'/';
+	}
+
+	//--------------------------------------------------------------------
+
 
 	/**
 	 * Sets the name of the layout to use.

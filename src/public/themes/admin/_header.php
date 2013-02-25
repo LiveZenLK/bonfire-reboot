@@ -5,8 +5,6 @@
 	<title>Bootstrap 101 Template</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-	<link href="/assets/css/bootstrap.min.css" rel="stylesheet" media="screen">
-	<link href="/assets/css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
-	<link href="<?php echo Template::url('css/screen.css') ?>" rel="stylesheet" media="screen">
+	<?php echo BF_Assets::css_tag('bootstrap.css', 'bootstrap-responsive.css', 'screen.css'); ?>
 </head>
 <body>

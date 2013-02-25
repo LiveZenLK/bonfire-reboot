@@ -71,15 +71,19 @@ class Bf_pipeline extends BF_Controller {
 		// Folder name based on file type (css, img, js, audio, video, flash)
 		$folder_type = $this->determine_folder_type($path);
 
+		// Load our asset library and start our cache, if the app isn't using one.
+		BF_Assets::enable_cache();
+
 		/*
 			Get the file contents
 		 */
 		if (!$contents = $this->cache->get($path))
 		{
-			$this->build_asset_paths();
-			foreach ($this->asset_paths as $asset_path)
+			$paths = BF_Assets::init_paths();
+
+			foreach ($paths as $asset_path)
 			{
-				$file = $asset_path . $folder_type .'/'. $path;
+				$file = $asset_path .'/'. $path;
 
 				if (is_file($file))
 				{

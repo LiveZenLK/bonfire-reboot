@@ -37,7 +37,7 @@ If you want to include all of the stylesheets within the subfolders, also, then 
 
     echo BF_Assets::css_tag('all', array('recursive' => true));
 
-When the <tt>css_tag</tt> method is used without any parameters, it will use all of the CSS files that have been added via the <tt>add_css()</tt> and <tt>add_module_css()</tt> tags.
+When the <tt>css_tag</tt> method is used without any parameters, it will use all of the CSS files that have been added via the <tt>add_css()</tt> tag.
 
 	BF_Assets::add_css('style.css', 'alt_style.css');
 
@@ -47,4 +47,76 @@ When the <tt>css_tag</tt> method is used without any parameters, it will use all
 
 ### Adding CSS Files
 
-You can add CSS files that should have links rendered them with the <tt>add_css()</tt> method.
+You can add CSS files that should have links rendered them with the <tt>add_css()</tt> method. You can provide as many file names as you'd like in a comma-delimited list. These can then have links rendered later by using the <tt>css_tag()</tt> with no parameters.
+
+    BF_Assets::add_css('style.css', 'alt_style.css');
+
+### js_tag()
+
+Creates links to the Javascript files in your <tt>public/assets/js</tt> folder. You can pass in as many script names as you wish.
+
+    echo BF_Assets::js_tag('xmlhr');  // Creates....
+    <script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+
+    echo BF_Assets::js_tag('xmlhr.js');
+    <script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+
+    echo BF_Assets::js_tag('xmlhr.js', 'common.js');
+    <script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+    <script type="text/javascript" src="/assets/js/common.js"></script>
+
+    echo BF_Assets::js_tag('module/xmlhr.js');
+    <script type="text/javascript" src="/assets/js/module/xmlhr.js"></script>
+
+You can create links for all javascript files in your <tt>assets/js</tt> folder by passing in 'all' as the only file name. This will only grab script files in the root of the <tt>js</tt> folder. Any subfolders will not be scanned.
+
+    echo BF_Assets::js_tag('all');
+    <script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+    <script type="text/javascript" src="/assets/js/common.js"></script>
+
+If you want to include all of the script files within the subfolders also, then pass a <tt>'recursive' => true</tt> in the options array.
+
+    echo BF_Assets::js_tag('all', array('recursive' => true));
+
+When the <tt>js_tag()</tt> method is used without any parameters, it will use all of the JS files that have been added via the <tt>add_js()</tt> tag.
+
+    BF_Assets::add_js('xmlhr.js', 'common.js');
+
+    echo BF_Assets::js_tag();
+    <script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+    <script type="text/javascript" src="/assets/js/common.js"></script>
+
+### Adding Javascript Files
+
+You can add javascript files that should have links rendered them with the <tt>add_js()</tt> method. You can provide as many file names as you'd like in a comma-delimited list. These can then have links rendered later by using the <tt>js_tag()</tt> with no parameters.
+
+    BF_Assets::add_js('xmlhr.js', 'common.js');
+
+### Linking to Images
+
+You can use the <tt>img_tag()</tt> method to create links to any images that current reside in your public <tt>assets/img</tt> folder.
+
+You can provide an array of key/value pairs to pass along several options to the image tag, including:
+
+'alt' If no alt text is given, the file name part of the source is used (capitalized and without the extension)
+
+'size' Supplied as "{width}x{height}" format, so "30x45" becomes <tt>width="30" height="45"</tt>. Size will be ignored if the value is not in the correct format.
+
+
+     echo BF_Assets::img_tag('icon');
+     <img src="/assets/img/icon" alt="Icon" />
+
+     echo BF_Assets::img_tag('icon.png');
+     <img src="/assets/img/icon.png" alt="Icon" />
+
+     echo BF_Assets::img_tag('icon.png', array('size' => '16x10', 'alt' => 'Edit Entry'));
+     <img src="/assets/img/icon.png" width="16" height="10" alt="Edit Entry" />
+
+    echo BF_Assets::img_tag('icons/icon.gif', array('size' => '16x16'));
+    <img src="/assets/img/icons/icon.gif" width="16" height="16" alt="Icon" />
+
+    echo BF_Assets::img_tag('icons/icon.gif', array('height' => '32', 'width' => 32));
+    <img src="/assets/img/icons/icon.gif" width="32" height="32" alt="Icon" />
+
+    echo BF_Assets::img_tag('icons/icon.gif', array('class' => 'menu_icon'));
+    <img src="/assets/img/icons/icon.gif" class="menu_icon" alt="Icon" />

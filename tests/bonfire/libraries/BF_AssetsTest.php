@@ -12,7 +12,112 @@ class BF_AssetsTest extends CI_UnitTestCase {
 	public function test_is_loaded()
 	{
 		$this->assertTrue(class_exists('BF_Assets'));
-		$this->assertTrue(1);
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_css_tag()
+	{
+		$test = BF_Assets::css_tag('style');
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="screen" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::css_tag('style.css');
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="screen" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::css_tag('http://cibonfire.com/assets/css/style.css');
+		$str = '<link rel="stylesheet" type="text/css" href="http://cibonfire.com/assets/css/style.css" media="screen" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::css_tag('style.css', array('media' => 'all'));
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="all" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::css_tag('style.css', array('media' => 'print'));
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="print" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::css_tag('style.css', 'alt_style.css');
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/assets/css/alt_style.css" media="screen" />';
+		$this->assertEqual(trim($test), trim($str));
+
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_add_css()
+	{
+		BF_Assets::add_css('style.css', 'alt_style.css');
+
+		$test = BF_Assets::css_tag();
+		$str = '<link rel="stylesheet" type="text/css" href="/assets/css/style.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="/assets/css/alt_style.css" media="screen" />';
+		$this->assertEqual(trim($test), trim($str));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_js_tag()
+	{
+		$test = BF_Assets::js_tag('xmlhr');
+		$str = '<script type="text/javascript" src="/assets/js/xmlhr.js"></script>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::js_tag('xmlhr.js');
+		$str = '<script type="text/javascript" src="/assets/js/xmlhr.js"></script>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::js_tag('xmlhr.js', 'common.js');
+		$str = '<script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+<script type="text/javascript" src="/assets/js/common.js"></script>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::js_tag('module/xmlhr.js');
+		$str = '<script type="text/javascript" src="/assets/js/module/xmlhr.js"></script>';
+		$this->assertEqual(trim($test), trim($str));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_add_js()
+	{
+		BF_Assets::add_js('xmlhr.js', 'common.js');
+
+		$test = BF_Assets::js_tag();
+		$str = '<script type="text/javascript" src="/assets/js/xmlhr.js"></script>
+<script type="text/javascript" src="/assets/js/common.js"></script>';
+		$this->assertEqual(trim($test), trim($str));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_img_tag()
+	{
+		$test = BF_Assets::img_tag('icon');
+		$str = '<img src="/assets/img/icon" alt="Icon" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::img_tag('icon.png');
+		$str = '<img src="/assets/img/icon.png" alt="Icon" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::img_tag('icon.png', array('size' => '16x10', 'alt' => 'Edit Entry'));
+		$str = '<img src="/assets/img/icon.png" width="16" height="10" alt="Edit Entry" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::img_tag('icons/icon.gif', array('size' => '16x16'));
+		$str = '<img src="/assets/img/icons/icon.gif" width="16" height="16" alt="Icon" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::img_tag('icons/icon.gif', array('height' => '32', 'width' => 32));
+		$str = '<img src="/assets/img/icons/icon.gif" width="32" height="32" alt="Icon" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::img_tag('icons/icon.gif', array('class' => 'menu_icon'));
+		$str = '<img src="/assets/img/icons/icon.gif" class="menu_icon" alt="Icon" />';
+		$this->assertEqual(trim($test), trim($str));
 	}
 
 	//--------------------------------------------------------------------

@@ -126,10 +126,12 @@ class BF_Assets {
 	{
 		if (!func_num_args())
 		{
-			return '';
+			$files = self::$css_files;
 		}
-
-		$files 		= func_get_args();
+		else
+		{
+			$files 		= func_get_args();
+		}
 		$options 	= array();
 
 		// The only one that would be an array should be the 'options' array,
@@ -195,7 +197,7 @@ class BF_Assets {
 			// Make sure we have a consistent filename to deal with.
 			$file = rtrim($file, '.css') .'.css';
 
-			if (strpos('http', $file) === FALSE)
+			if (strpos($file, 'http') === FALSE)
 			{
 				$file = self::$asset_url .'css/'. $file;
 			}
@@ -207,16 +209,206 @@ class BF_Assets {
 				'media'	=> $media
 			);
 
-			$final .= '<link '. self::attributes($attr) ." />\n";
+			$final .= '<link'. self::attributes($attr) ." />\n";
 		}
 
 		return $final;
 	}
 
+	//--------------------------------------------------------------------
+
 
 	//--------------------------------------------------------------------
 	// JS Methods
 	//--------------------------------------------------------------------
+
+	/**
+	 * Adds multiple javascript files to the list to be rendered out later.
+	 */
+	public function add_js()
+	{
+		if (!func_num_args())
+		{
+			return;
+		}
+
+		$files = func_get_args();
+
+		if (is_array($files))
+		{
+			self::$js_files = array_merge(self::$js_files, $files);
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Renders out the links to the appropriate JS files.
+	 *
+	 * If we are in debug mode, or 'assets.enabled' is FALSE, then we create
+	 * separate link tags for each file
+	 *
+	 * @return [type] [description]
+	 */
+	public static function js_tag()
+	{
+		if (!func_num_args())
+		{
+			$files = self::$js_files;
+		}
+		else
+		{
+			$files 		= func_get_args();
+		}
+		$options 	= array();
+
+		// The only one that would be an array should be the 'options' array,
+		// so grab it out of the files list.
+		for ($i=0; $i < count($files); $i++)
+		{
+			if (is_array($files[$i]))
+			{
+				$options = $files[$i];
+				unset($files[$i]);
+				break;
+			}
+		}
+
+		// Was the 'all' keyword passed in?
+		if (in_array('all', $files))
+		{
+			$recursive = isset($options['recursive']) ? $options['recursive'] : false;
+			$files = self::get_filenames_from_folder(FCPATH .'assets/js/', 'js', $recursive);
+		}
+
+		// Is the pipeline enabled?
+		if (self::$pipeline_enabled)
+		{
+
+		}
+		else
+		{
+			// Render out individual links
+			return self::debug_js($files);
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Builds individual links for all JS files in the system.
+	 *
+	 * Note that we do NOT check the files exist, etc here. Instead, we
+	 * let the bf_pipeline controller handle that.
+	 *
+	 * @param  array $files  The files to create links to.
+	 * @return string        The links to all files.
+	 */
+	private static function debug_js($files)
+	{
+		if (!is_array($files))
+		{
+			return '';
+		}
+
+		$final = '';
+
+		foreach ($files as $file)
+		{
+			// Make sure we have a consistent filename to deal with.
+			$file = rtrim($file, '.js') .'.js';
+
+			if (strpos($file, 'http') === FALSE)
+			{
+				$file = self::$asset_url .'js/'. $file;
+			}
+
+			$attr = array(
+				'type'	=> 'text/javascript',
+				'src'	=> $file,
+			);
+
+			$final .= '<script'. self::attributes($attr) ."></script>\n";
+		}
+
+		return $final;
+	}
+
+	//--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// Images
+	//--------------------------------------------------------------------
+
+	/**
+	 * Creates an image tag for any image in public/assets/img folder.
+	 *
+	 * @param  [type] $file    [description]
+	 * @param  array  $options [description]
+	 * @return [type]          [description]
+	 */
+	public static function img_tag($file=null, $options=array())
+	{
+		if (strpos($file, 'http') === FALSE)
+		{
+			$file = self::$asset_url .'img/'. $file;
+		}
+
+		$attr = array(
+			'src'	=> $file
+		);
+
+		// Size
+		if (isset($options['size']))
+		{
+			list($width, $height) = explode('x', $options['size']);
+
+			if (is_numeric($width))
+			{
+				$attr['width'] = $width;
+			}
+
+			if (is_numeric($height))
+			{
+				$attr['height'] = $height;
+			}
+		}
+
+		// Width
+		if (isset($options['width']))
+		{
+			$attr['width'] = $options['width'];
+		}
+
+		// Height
+		if (isset($options['height']))
+		{
+			$attr['height'] = $options['height'];
+		}
+
+		// Class
+		if (isset($options['class']))
+		{
+			$attr['class'] = $options['class'];
+		}
+
+		// Alt Tag
+		if (isset($options['alt']))
+		{
+			$attr['alt'] = $options['alt'];
+		}
+		else
+		{
+			$info = pathinfo($file);
+			$attr['alt'] =  ucwords( str_replace('_', ' ', basename($file,'.'.$info['extension']) ));
+		}
+
+
+		return '<img'. self::attributes($attr) ." />\n";
+	}
+
+	//--------------------------------------------------------------------
+
 
 	//--------------------------------------------------------------------
 	// Utility Methods

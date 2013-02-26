@@ -194,18 +194,10 @@ class BF_Assets {
 
 		foreach ($files as $file)
 		{
-			// Make sure we have a consistent filename to deal with.
-			$file = rtrim($file, '.css') .'.css';
-
-			if (strpos($file, 'http') === FALSE)
-			{
-				$file = self::$asset_url .'css/'. $file;
-			}
-
 			$attr = array(
 				'rel'	=> 'stylesheet',
 				'type'	=> 'text/css',
-				'href'	=> $file,
+				'href'	=> self::compute_public_path($file, 'css', 'css', false),
 				'media'	=> $media
 			);
 
@@ -315,17 +307,9 @@ class BF_Assets {
 
 		foreach ($files as $file)
 		{
-			// Make sure we have a consistent filename to deal with.
-			$file = rtrim($file, '.js') .'.js';
-
-			if (strpos($file, 'http') === FALSE)
-			{
-				$file = self::$asset_url .'js/'. $file;
-			}
-
 			$attr = array(
 				'type'	=> 'text/javascript',
-				'src'	=> $file,
+				'src'	=> self::compute_public_path($file, 'js', 'js', false),
 			);
 
 			$final .= '<script'. self::attributes($attr) ."></script>\n";
@@ -349,13 +333,8 @@ class BF_Assets {
 	 */
 	public static function img_tag($file=null, $options=array())
 	{
-		if (strpos($file, 'http') === FALSE)
-		{
-			$file = self::$asset_url .'img/'. $file;
-		}
-
 		$attr = array(
-			'src'	=> $file
+			'src'	=> self::compute_public_path($file, 'img', null, false)
 		);
 
 		// Size
@@ -409,6 +388,61 @@ class BF_Assets {
 
 	//--------------------------------------------------------------------
 
+	//--------------------------------------------------------------------
+	// Path Methods
+	//--------------------------------------------------------------------
+
+	/**
+	 * Computes the path to an asset in the public assets/css directory. If
+	 * the source has no extension, .css will be added unless it is a full
+	 * URI. Full paths from the document root will be passed through.
+	 *
+	 * @param  string $source The source of the asset location.
+	 *
+	 * @return string         The computed path
+	 */
+	public static function css_path($source=null)
+	{
+		return compute_public_path($source, 'css', 'css');
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Builds the correct URI path to an asset. Adds the extension if not present.
+	 * Returns full URLs untouched. Prefix with assets_path var.
+	 *
+	 * @param  string $source The source asset file to build out.
+	 * @param  string $folder The folder (within assets) to inlcude if necessary
+	 * @param  string $ext    The file extension to add.
+	 * @param  bool   $include_host [description]
+	 *
+	 * @return string         The computed path relative to the site.
+	 */
+	private static function compute_public_path($source, $folder, $ext=null, $include_host=true)
+	{
+		// Standardize to include extension
+		if (!empty($ext))
+		{
+			$ext = '.'. trim($ext, '.');
+			$source = rtrim($source, $ext) . $ext;
+		}
+
+		// Add our assets path to it unless it starts with '/'
+		if ($source[0] != '/' && !self::is_uri($source))
+		{
+			$source = self::$asset_url . $folder .'/'. $source;
+		}
+
+		if ($include_host)
+		{
+			$source = base_url($source);
+		}
+
+		return $source;
+	}
+
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	// Utility Methods
@@ -604,6 +638,19 @@ class BF_Assets {
 		unset($map);
 
 		return $files;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Determines if a file is any type of URI (http, https, ftp, etc).
+	 *
+	 * @param  string  $source The value to interpret
+	 * @return boolean
+	 */
+	public static function is_uri($path)
+	{
+		return (bool)preg_match('/^[a-z]+:\/\//', $path);
 	}
 
 	//--------------------------------------------------------------------

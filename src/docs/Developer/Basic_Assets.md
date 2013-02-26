@@ -51,6 +51,8 @@ You can add CSS files that should have links rendered them with the <tt>add_css(
 
     BF_Assets::add_css('style.css', 'alt_style.css');
 
+## Javascript
+
 ### js_tag()
 
 Creates links to the Javascript files in your <tt>public/assets/js</tt> folder. You can pass in as many script names as you wish.
@@ -92,7 +94,7 @@ You can add javascript files that should have links rendered them with the <tt>a
 
     BF_Assets::add_js('xmlhr.js', 'common.js');
 
-### Linking to Images
+## Images
 
 You can use the <tt>img_tag()</tt> method to create links to any images that current reside in your public <tt>assets/img</tt> folder.
 
@@ -120,3 +122,7 @@ You can provide an array of key/value pairs to pass along several options to the
 
     echo BF_Assets::img_tag('icons/icon.gif', array('class' => 'menu_icon'));
     <img src="/assets/img/icons/icon.gif" class="menu_icon" alt="Icon" />
+
+
+## Audio
+

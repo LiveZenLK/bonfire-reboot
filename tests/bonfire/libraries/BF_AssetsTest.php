@@ -122,4 +122,17 @@ class BF_AssetsTest extends CI_UnitTestCase {
 
 	//--------------------------------------------------------------------
 
+	public function test_is_uri()
+	{
+		$this->assertTrue(BF_Assets::is_uri('http://mysite.com'));
+		$this->assertTrue(BF_Assets::is_uri('https://mysite.com'));
+		$this->assertTrue(BF_Assets::is_uri('ftp://mysite.com'));
+		$this->assertTrue(BF_Assets::is_uri('file://mysite.com'));
+		$this->assertFalse(BF_Assets::is_uri('mysite.com'));
+		$this->assertFalse(BF_Assets::is_uri('/mysite.com'));
+	}
+
+	//--------------------------------------------------------------------
+
+
 }

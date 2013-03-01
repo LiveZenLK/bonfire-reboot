@@ -162,3 +162,17 @@ By default, the string 'Your browser does not support the audio tag.' will be di
         <source src="/audio/sound.wav" type="audio/wav">
         ...
     </audio>
+
+
+## RSS Feed Auto-Discovery
+
+You can create a link that browsers and news readers can use to auto-detect an RSS or ATOM feed. The 'type' can be either 'rss' (default) or 'atom'. If no 'url' is provided in the options array, the current url is used instead.
+
+    echo BF_Assets::auto_discovery_tag();
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="{current_url}" />
+
+     echo BF_Assets::auto_discovery_tag( array('type' => 'atom') );
+    <link rel="alternate" type="application/atom+xml" title="RSS" href="{current_url}" />
+
+     echo BF_Assets::auto_discovery_tag( array('url'=>'/feed', 'title' => 'My RSS Feed') );
+    <link rel="alternate" type="application/rss+xml" title="My RSS Feed" href="http://localhost/feed" />

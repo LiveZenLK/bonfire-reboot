@@ -460,6 +460,29 @@ class BF_Assets {
 
 	//--------------------------------------------------------------------
 
+	public function auto_discovery_tag($options=array())
+	{
+		if (!function_exists('current_url'))
+		{
+			$this->ci->load->helper('url');
+		}
+
+		$attr = array();
+
+		$attr['rel'] = isset($options['rel']) ? $options['rel'] : 'alternate';
+
+		$type = isset($options['type']) ? $options['type'] : 'rss';
+		$attr['type'] = "application/{$type}+xml";
+
+		$attr['title'] = isset($options['title']) ? $options['title'] : 'RSS';
+
+		$attr['href'] = isset($options['url']) ? self::compute_public_path($options['url'], null, null, true, false) : current_url();
+
+		return '<link'. self::attributes($attr) ." />\n";
+	}
+
+	//--------------------------------------------------------------------
+
 
 	//--------------------------------------------------------------------
 	// Path Methods
@@ -492,7 +515,7 @@ class BF_Assets {
 	 *
 	 * @return string         The computed path relative to the site.
 	 */
-	private static function compute_public_path($source, $folder, $ext=null, $include_host=true)
+	private static function compute_public_path($source, $folder=null, $ext=null, $include_host=true, $include_asset_folder=true)
 	{
 		// Standardize to include extension
 		if (!empty($ext))
@@ -504,7 +527,10 @@ class BF_Assets {
 		// Add our assets path to it unless it starts with '/'
 		if ($source[0] != '/' && !self::is_uri($source))
 		{
-			$source = self::$asset_url . $folder .'/'. $source;
+			$temp = $include_asset_folder == true ? self::$asset_url : '';
+			$temp .= !empty($folder) ? $folder .'/'. $source : $source;
+
+			$source = $temp;
 		}
 
 		if ($include_host)

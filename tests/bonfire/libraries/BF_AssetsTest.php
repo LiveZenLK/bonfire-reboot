@@ -169,5 +169,21 @@ class BF_AssetsTest extends CI_UnitTestCase {
 
 	//--------------------------------------------------------------------
 
+	public function test_auto_discovery_tag()
+	{
+		$test = BF_Assets::auto_discovery_tag();
+		$str = '<link rel="alternate" type="application/rss+xml" title="RSS" href="http://localhost/index.php/-f/bonfire/libraries/BF_AssetsTest.php" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::auto_discovery_tag( array('type' => 'atom') );
+		$str = '<link rel="alternate" type="application/atom+xml" title="RSS" href="http://localhost/index.php/-f/bonfire/libraries/BF_AssetsTest.php" />';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::auto_discovery_tag( array('title' => 'My RSS Feed', 'url' => 'rss/feed') );
+		$str = '<link rel="alternate" type="application/rss+xml" title="My RSS Feed" href="http://localhost/rss/feed" />';
+		$this->assertEqual(trim($test), trim($str));
+	}
+
+	//--------------------------------------------------------------------
 
 }

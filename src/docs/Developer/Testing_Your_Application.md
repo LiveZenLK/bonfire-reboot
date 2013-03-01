@@ -1,6 +1,6 @@
 # Testing Your Applications
 
-Bonfire makes testing your projects using [SimpleTest](http://simpletest.org) and [Mockery](https://github.com/padraic/mockery) as easy as possible, both from the command line and from the browser.
+Bonfire makes testing your projects using [SimpleTest](http://simpletest.org) as easy as possible, both from the command line and from the browser.
 
 ## Installing Simpletest
 
@@ -10,7 +10,7 @@ SimpleTest can be installed either manually, or via [Composer](http://getcompose
 
 This step assumes that you have Composer installed already on your development machine. If you do not, first [install using Composer's guide](http://getcomposer.org/doc/00-intro.md).
 
-Bonfire's <tt>composer.json</tt> file has everything setup for you to install both Composer and Mockery in your development environment. Simply run a
+Bonfire's <tt>composer.json</tt> file has everything setup for you to install SimpleTest in your development environment. Simply run a
 
     composer install --dev
 
@@ -27,21 +27,6 @@ To install SimpleTest by hand, [download the latest release](http://sourceforge.
                     . . . simpletest's files . . .
 
 The extra folder is necessary to work with the recommended Composer installation.
-
-Installing Mockery is the same procedure.
-
-- [Download Mockery](https://github.com/padraic/mockery/archive/master.zip)
-- Uncompress it somewhere.
-- Rename the folder from <tt>mockery-master</tt> to <tt>mocker</tt>
-- Copy it to <tt>src/vendor/mockery</tt>
-
-Your folder structure should now look like:
-
-    src/
-        vendor/
-            mockery/
-                mockery/
-                    . . . mockery's files . . .
 
 ## Organizing Tests
 
@@ -88,6 +73,13 @@ Will run all tests in the tests folder except for those located in the <tt>appli
 
     php tests/run.php -b
     php tests/run.php -bf_only
+
+#### Running A Single Test
+
+You can run a single test from the command line with the <tt>-f</tt> or <tt>--file</tt> command line arguments. The filename must be relative to the tests folder.
+
+    php tests/run.php -f bonfire/libraries/BF_AssetsTest.php
+    php tests/run.php --file bonfire/libraries/BF_AssetsTest.php
 
 
 ### From the Browser

@@ -116,7 +116,7 @@ class BF_AssetsTest extends CI_UnitTestCase {
 		$this->assertEqual(trim($test), trim($str));
 
 		$test = BF_Assets::img_tag('icons/icon.gif', array('class' => 'menu_icon'));
-		$str = '<img src="/assets/img/icons/icon.gif" class="menu_icon" alt="Icon" />';
+		$str = '<img src="/assets/img/icons/icon.gif" alt="Icon" class="menu_icon" />';
 		$this->assertEqual(trim($test), trim($str));
 	}
 
@@ -130,6 +130,41 @@ class BF_AssetsTest extends CI_UnitTestCase {
 		$this->assertTrue(BF_Assets::is_uri('file://mysite.com'));
 		$this->assertFalse(BF_Assets::is_uri('mysite.com'));
 		$this->assertFalse(BF_Assets::is_uri('/mysite.com'));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function test_audio_tag()
+	{
+		$test = BF_Assets::audio_tag('sound.wav');
+		$str = '<audio>
+    <source src="/assets/audio/sound.wav" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::audio_tag('/audio/sound.wav');
+		$str = '<audio>
+    <source src="/audio/sound.wav" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::audio_tag('sound.wav', 'sound.mp3', 'sound.ogg');
+		$str = '<audio>
+    <source src="/assets/audio/sound.wav" type="audio/wav">
+    <source src="/assets/audio/sound.mp3" type="audio/mpeg">
+    <source src="/assets/audio/sound.ogg" type="audio/ogg">
+    Your browser does not support the audio tag.
+</audio>';
+		$this->assertEqual(trim($test), trim($str));
+
+		$test = BF_Assets::audio_tag('sound.wav', array('controls' => true, 'class' => 'audio'));
+		$str = '<audio controls="controls" class="audio">
+    <source src="/assets/audio/sound.wav" type="audio/wav">
+    Your browser does not support the audio tag.
+</audio>';
+		$this->assertEqual(trim($test), trim($str));
 	}
 
 	//--------------------------------------------------------------------

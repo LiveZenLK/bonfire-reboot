@@ -351,30 +351,29 @@ class BF_Assets {
 			{
 				$attr['height'] = $height;
 			}
+
+			unset($options['size']);
 		}
 
 		// Width
 		if (isset($options['width']))
 		{
 			$attr['width'] = $options['width'];
+			unset($options['width']);
 		}
 
 		// Height
 		if (isset($options['height']))
 		{
 			$attr['height'] = $options['height'];
-		}
-
-		// Class
-		if (isset($options['class']))
-		{
-			$attr['class'] = $options['class'];
+			unset($options['height']);
 		}
 
 		// Alt Tag
 		if (isset($options['alt']))
 		{
 			$attr['alt'] = $options['alt'];
+			unset($options['alt']);
 		}
 		else
 		{
@@ -382,11 +381,85 @@ class BF_Assets {
 			$attr['alt'] =  ucwords( str_replace('_', ' ', basename($file,'.'.$info['extension']) ));
 		}
 
+		// Merge in any remaining options
+		$attr = array_merge($attr, $options);
 
 		return '<img'. self::attributes($attr) ." />\n";
 	}
 
 	//--------------------------------------------------------------------
+
+	public static function audio_tag()
+	{
+		if (!func_num_args())
+		{
+			$files = self::$js_files;
+		}
+		else
+		{
+			$files 		= func_get_args();
+		}
+		$options 	= array();
+
+		// The only one that would be an array should be the 'options' array,
+		// so grab it out of the files list.
+		for ($i=0; $i < count($files); $i++)
+		{
+			if (is_array($files[$i]))
+			{
+				$options = $files[$i];
+				unset($files[$i]);
+				break;
+			}
+		}
+
+		// Content to show if browser doesn't support this tag.
+		$inner_content = 'Your browser does not support the audio tag.';
+		if (isset($options['inner_content']))
+		{
+			$inner_content = $options['inner_content'];
+			unset($options['inner_content']);
+		}
+
+		// the Attributes apply only to the audio tag itself, not the stuff inside.
+		$attrs = array();
+
+		foreach ($options as $key => $value)
+		{
+			// Is it a core audio param?
+			if (in_array(strtolower($key), array('autoplay', 'controls', 'loop', 'muted')))
+			{
+				$attrs[$key] = $key;
+				unset($options[$key]);
+			}
+		}
+
+		// Include any additional attributes.
+		$attrs = array_merge($attrs, $options);
+
+		$output = '<audio'. self::attributes($attrs) .">\n";
+
+		foreach ($files as $file)
+		{
+			$src = self::compute_public_path($file, 'audio', null, false);
+
+			$type = '';
+			$type = stripos($src, '.mp3') !== FALSE ? 'audio/mpeg' : $type;
+			$type = stripos($src, '.wav') !== FALSE ? 'audio/wav' : $type;
+			$type = stripos($src, '.ogg') !== FALSE ? 'audio/ogg' : $type;
+
+			$output .='    <source src="'. $src .'" type="'. $type .'">'. "\n";
+		}
+
+		$output .= '    '. $inner_content ."\n";
+
+		$output .= "</audio>\n";
+
+		return $output;
+	}
+
+	//--------------------------------------------------------------------
+
 
 	//--------------------------------------------------------------------
 	// Path Methods

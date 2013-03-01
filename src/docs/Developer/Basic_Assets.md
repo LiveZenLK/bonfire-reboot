@@ -126,3 +126,39 @@ You can provide an array of key/value pairs to pass along several options to the
 
 ## Audio
 
+You can create HTML5 audio file links within your site with the <tt>audio_tag()</tt> method. By default this will look within the <tt>/assets/audio</tt> folder, though this can be overridden on a per-call basis by simply providing a full relatvie URl path in the call.
+
+Any additional elements can be passed in the tag and will be included on the tag. If they have a value of 'true' then they will be displayed as 'key'='key' for backward compatibility.
+
+    echo BF_Assets::audio_tag('sound.wav');
+    <audio>
+        <source src="/assets/audio/sound.wav" type="audio/wav">
+        Your browser does not support the audio tag.
+    </audio>
+
+    echo BF_Assets::audio_tag('/assets/audio/sound.wav', 'sound.mp3');
+    <audio>
+        <source src="sound.wav" type="audio/wav">
+        <source src="sound.mp3" type="audio/mpeg">
+        Your browser does not support the audio tag.
+    </audio>
+
+    echo BF_Assets::audio_tag('/audio/sound.wav');
+    <audio>
+        <source src="/audio/sound.wav" type="audio/wav">
+        Your browser does not support the audio tag.
+    </audio>
+
+    echo BF_Assets::audio_tag('sound.wav' array( 'autoplay' => true, 'controls' => true, 'class' => 'song',  ));
+    <audio controls>
+        <source src="/audio/sound.wav" type="audio/wav">
+        Your browser does not support the audio tag.
+    </audio>
+
+By default, the string 'Your browser does not support the audio tag.' will be displayed for browsers that don't understand the HTML5 tag. You may customize this by passing in a string with additional content (like a flash-based player) as the <tt>inner_content</tt> key of the options array.
+
+    echo BF_Assets::audio_tag('sound.wav' array( 'inner_content' => '...' ));
+    <audio controls>
+        <source src="/audio/sound.wav" type="audio/wav">
+        ...
+    </audio>

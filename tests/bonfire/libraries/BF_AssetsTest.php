@@ -186,4 +186,16 @@ class BF_AssetsTest extends CI_UnitTestCase {
 
 	//--------------------------------------------------------------------
 
+	public function test_fingerprinting()
+	{
+		$name = BF_Assets::fingerprint('index.php');
+		$known_name = 'index-a00b4dba555baa30d1c2a2f43e45f7c7.php';
+		$this->assertEqual($name, $known_name);
+
+		$name = BF_Assets::fingerprint('./index.php');
+		$this->assertEqual($name, $known_name);
+	}
+
+	//--------------------------------------------------------------------
+
 }

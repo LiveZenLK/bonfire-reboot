@@ -62,6 +62,12 @@ class BF_Assets {
 	 */
 	protected static $asset_url = '/assets/';
 
+	/**
+	 * Fingerprints are md5 hashes of hte contents of the file in most cases.
+	 * Protects filenames from far-future expires.
+	 */
+	protected static $fingerprint_assets = FALSE;
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -82,6 +88,7 @@ class BF_Assets {
 		}
 
 		self::$pipeline_enabled = self::$ci->config->item('assets.enabled');
+		self::$fingerprint_assets = self::$ci->config->item('assets.fingerprint');
 
 		// Is debug mode enabled from the URL?
 		self::$debug = isset($_GET['debug']);
@@ -515,7 +522,7 @@ class BF_Assets {
 	 *
 	 * @return string         The computed path relative to the site.
 	 */
-	private static function compute_public_path($source, $folder=null, $ext=null, $include_host=true, $include_asset_folder=true)
+	public static function compute_public_path($source, $folder=null, $ext=null, $include_host=true, $include_asset_folder=true)
 	{
 		// Standardize to include extension
 		if (!empty($ext))
@@ -533,6 +540,12 @@ class BF_Assets {
 			$source = $temp;
 		}
 
+		// Fingerprint the asset name for cache-busting
+		if (self::$fingerprint_assets)
+		{
+			$source = self::fingerprint($source);
+		}
+
 		if ($include_host)
 		{
 			$source = base_url($source);
@@ -542,6 +555,43 @@ class BF_Assets {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Generates the fingerprinted filename based on the contents of the
+	 * file (or combination of files). This should be used for generating
+	 * pre-compiled filenames, not necessarily on live files. This can
+	 * be intensive since it must
+	 *
+	 * @param  string $source The name of the source file to fingerprint.
+	 * @return string         The revised source name, including the fingerprint.
+	 */
+	public static function fingerprint($source)
+	{
+		if (!self::is_uri($source) && is_file($source))
+		{
+			$hash = md5_file($source);
+
+			$ext = '.'. pathinfo($source, PATHINFO_EXTENSION);
+			$name = str_replace($ext, '', basename($source));
+
+			$name = $name .'-'. $hash . $ext;
+
+			return $name;
+		}
+
+		// File doesn't exist, or is a full URL, so we don't mess with it.
+		return $source;
+	}
+
+	//--------------------------------------------------------------------
+
+	public static function enable_fingerprinting($enable=true)
+	{
+		self::$enable_fingerprinting = $enable;
+	}
+
+	//--------------------------------------------------------------------
+
 
 	//--------------------------------------------------------------------
 	// Utility Methods

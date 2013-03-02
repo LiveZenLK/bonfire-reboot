@@ -60,7 +60,7 @@ class BF_Assets {
 	 * In order for the asset pipeline to work, a route must exist that funnels
 	 * these calls to the bf_pipeline controller.
 	 */
-	protected static $asset_url = '/assets/';
+	protected static $asset_url;
 
 	/**
 	 * Fingerprints are md5 hashes of hte contents of the file in most cases.
@@ -87,6 +87,7 @@ class BF_Assets {
 			self::$ci->config->load('application');
 		}
 
+		self::$asset_url = self::$ci->config->item('assets.url');
 		self::$pipeline_enabled = self::$ci->config->item('assets.enabled');
 		self::$fingerprint_assets = self::$ci->config->item('assets.fingerprint');
 
@@ -559,8 +560,7 @@ class BF_Assets {
 	/**
 	 * Generates the fingerprinted filename based on the contents of the
 	 * file (or combination of files). This should be used for generating
-	 * pre-compiled filenames, not necessarily on live files. This can
-	 * be intensive since it must
+	 * pre-compiled filenames, not necessarily on live files.
 	 *
 	 * @param  string $source The name of the source file to fingerprint.
 	 * @return string         The revised source name, including the fingerprint.
@@ -626,7 +626,7 @@ class BF_Assets {
 	{
 		// If the app isn't using the cache, we'll load up and use the
 		// file based cache since we know that will always be present.
-		if (!isset(self::$ci->cache))
+		if (!class_exists('CI_Cache'))
 		{
 			self::$ci->load->driver('cache', array('adapter' => 'file'));
 		}

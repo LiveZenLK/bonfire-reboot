@@ -2,6 +2,8 @@
 
 class Bf_pipeline extends BF_Controller {
 
+	protected $cache_type = 'dummy';
+
 	private $asset_paths = array();
 
 	/**
@@ -47,8 +49,9 @@ class Bf_pipeline extends BF_Controller {
 	/**
 	 * Folder Types that can be compressed and combined.
 	 */
-	private $can_combine = array('css', 'js');
-	private $can_compress = array('css', 'js');
+	private $can_combine 	= array('css', 'js');
+	private $can_compress 	= array('css', 'js');
+	private $can_cache		= array('css', 'js');
 
 	/**
 	 * Everything simply needs to go to the index method to make the magic happen.
@@ -68,25 +71,41 @@ class Bf_pipeline extends BF_Controller {
 		// Clean up the requested asset name.
 		$path = str_ireplace('assets/', '', $this->uri->uri_string());
 
+		// Stores where we actually find the file at.
+		$found_path = null;
+
+		$was_compressed	= false;
+		$was_joined		= false;
+
 		// Folder name based on file type (css, img, js, audio, video, flash)
 		$folder_type = $this->determine_folder_type($path);
 
 		// Load our asset library and start our cache, if the app isn't using one.
-		BF_Assets::enable_cache();
+		//BF_Assets::enable_cache();
+		if (!class_exists('CI_Cache'))
+		{
+			$this->load->driver('cache', array('adapter' => 'file'));
+		}
+		else {
+			// Make sure that we're not using 'dummy' cache. If we are
+			// move to file based...
+			$this->load->driver('cache', array('adapter' => 'file'));
+		}
 
 		/*
 			Get the file contents
 		 */
-		if (!$contents = $this->cache->get($path))
+		if (!$contents = $this->cache->get(str_replace('/', '\\', $path)))
 		{
 			$paths = BF_Assets::init_paths();
-
 			foreach ($paths as $asset_path)
 			{
-				$file = $asset_path .'/'. $path;
+				$file = $asset_path . $path;
 
 				if (is_file($file))
 				{
+					$found_path = $file;
+
 					switch ($folder_type)
 					{
 						case 'css':
@@ -119,6 +138,7 @@ class Bf_pipeline extends BF_Controller {
 
 						require ($vendor_path . $comp_path .'.php');
 						$contents = $class::$method($contents);
+						$was_compressed = true;
 						break;
 					case 'js':
 						list($comp_path, $method) = explode('::', $this->config->item('assets.js_compressor'));
@@ -126,11 +146,53 @@ class Bf_pipeline extends BF_Controller {
 
 						require ($vendor_path . $comp_path .'.php');
 						$contents = $class::$method($contents);
+						$was_compressed = true;
 						break;
 				}
 			}
 
-			$this->cache->save($path, $contents, 300);
+			/*
+				If Pipeline enabled, copy to public/assets so that
+				we have a static asset to serve next time.
+			 */
+			if ($this->config->item('assets.compile'))
+			{
+				// $path = final path to file (within /assets folder)
+				// $found_path = original source destination
+
+				$final_path = str_replace('//', '/', FCPATH . $this->config->item('assets.url') . $path);
+
+				// If it has been compressed or joined, we need to
+				// use the $content var and write out to file. These should
+				// always be text-based files so we should be good here.
+				if ($was_joined || $was_compressed)
+				{
+					$this->load->helper('file');
+
+					if (!write_file($final_path, $contents))
+					{
+						show_error('Unable to write to file: '. $final_path);
+					}
+				}
+
+				// Otherwise we simply copy the file...
+				else if (!empty($found_path))
+				{
+
+					if (!copy($found_path, $final_path))
+					{
+						show_error('Unable to copy file: '. $final_path);
+					}
+				}
+			}
+
+			/*
+				Save to Cache, if we are css or js
+			 */
+			if (in_array($folder_type, $this->can_cache))
+			{
+				$this->cache->save( str_replace('/', '\\', $path), $contents, 300);
+			}
 		}
 
 

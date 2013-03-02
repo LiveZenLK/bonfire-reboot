@@ -1,6 +1,19 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /*
+	Assets Public Folder.
+
+	This folder will be used when compiling assets and saving them to
+	the public folder. This is also the base URI that is used when
+	creating the links to the folder.
+
+	Default value: assets
+	URL http://localhost/assets
+	File /public/assets
+ */
+define('BF_ASSET_PATH', 'assets');
+
+/*
 |--------------------------------------------------------------------------
 | File and Directory Modes
 |--------------------------------------------------------------------------

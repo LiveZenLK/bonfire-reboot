@@ -2,6 +2,29 @@
 
 Bonfire provides a helper library that assists in building link tags for many different types of assets. It also can work with the [Asset Pipeline](/admin/help/Developer.Assets_Pipeline) to combine and minify your assets.
 
+## Overview
+
+Assets in Bonfire work hard to help you take advantage of as much front-end performance techniques as we can, yet still keep a very flexible system. You can combine files into a single file, minify javascript or CSS files, and even fingerprint the name so you can use far-future expires headers to take advantage of browser caching.
+
+The basic use of assets assumes that all assets are stored in the <tt>public/assets</tt> folder under the folder of their specific type.
+
+    public/
+        assets/
+            css/
+            js/
+            img/
+            audio/
+            video/
+
+When you use one of the assets tag methods (like <tt>css_tag()</tt>, <tt>js_tag()</tt>, <tt>img_tag()</tt>, etc) it will automatically build the filename to be in the correct folder based on file type (as determined by the file extension or the tag method used). You should note that this does NOT check that the file is actually there. That is completely your responsibility.
+
+
+### The Assets Path
+
+To change the folder that it will use for the asset base folder ('assets' by default), you can edit the <tt>config/constants.php</tt> file and change the value of the <tt>BF_ASSET_PATH</tt> value to be a folder within the <tt>/public</tt> folder. This constant is then used in the routes file to redirect assets and as the URL used to find assets at.
+
+    define('BF_ASSET_PATH', 'assets');
+
 ## Stylesheets
 
 ### <tt>css_tag()</tt>

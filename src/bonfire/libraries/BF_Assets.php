@@ -87,7 +87,7 @@ class BF_Assets {
 			self::$ci->config->load('application');
 		}
 
-		self::$asset_url = self::$ci->config->item('assets.url');
+		self::$asset_url = '/'. BF_ASSET_PATH .'/';
 		self::$pipeline_enabled = self::$ci->config->item('assets.enabled');
 		self::$fingerprint_assets = self::$ci->config->item('assets.fingerprint');
 

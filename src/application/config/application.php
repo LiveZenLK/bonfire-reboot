@@ -67,21 +67,20 @@ $config['template.default_theme']	= 'default';
 | applications will benefit from the speed and simplicity of using the Pipeline.
 |
 */
-# The base folder that assets are assumed to be in.
-$config['assets.url'] = '/assets/';
 
 # Should we compress assets?
-$config['assets.compress'] = TRUE;
+$config['assets.compress'] 			= FALSE;
 
 # Diplay files as single files?
-$config['assets.debug'] = TRUE;
+$config['assets.debug'] 			= TRUE;
+
+# If the static asset file is not foudnd, but the file is found
+# in one of the asset paths, should we compile it to a static asset?
+$config['assets.compile'] 			= FALSE;
 
 # Fingerprint asset names to work with far future expires
-$config['assets.fingerprint'] = FALSE;
+$config['assets.fingerprint'] 		= FALSE;
 
 # Compressors to use
 $config['assets.js_compressor'] 	= 'Minify/JSMin::minify';
 $config['assets.css_compressor']	= 'Minify/Minify_CSS::minify';
-
-# Fallback to assets pipeline if a precompiled  asset is missed?
-$config['assets.compile'] 			= TRUE;

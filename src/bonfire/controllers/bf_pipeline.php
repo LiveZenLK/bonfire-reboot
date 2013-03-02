@@ -69,7 +69,7 @@ class Bf_pipeline extends BF_Controller {
 	public function index($type)
 	{
 		// Clean up the requested asset name.
-		$path = str_ireplace('assets/', '', $this->uri->uri_string());
+		$path = str_ireplace(BF_ASSET_PATH .'/', '', $this->uri->uri_string());
 
 		// Stores where we actually find the file at.
 		$found_path = null;
@@ -79,18 +79,6 @@ class Bf_pipeline extends BF_Controller {
 
 		// Folder name based on file type (css, img, js, audio, video, flash)
 		$folder_type = $this->determine_folder_type($path);
-
-		// Load our asset library and start our cache, if the app isn't using one.
-		//BF_Assets::enable_cache();
-		if (!class_exists('CI_Cache'))
-		{
-			$this->load->driver('cache', array('adapter' => 'file'));
-		}
-		else {
-			// Make sure that we're not using 'dummy' cache. If we are
-			// move to file based...
-			$this->load->driver('cache', array('adapter' => 'file'));
-		}
 
 		/*
 			Get the file contents
@@ -160,7 +148,7 @@ class Bf_pipeline extends BF_Controller {
 				// $path = final path to file (within /assets folder)
 				// $found_path = original source destination
 
-				$final_path = str_replace('//', '/', FCPATH . $this->config->item('assets.url') . $path);
+				$final_path = str_replace('//', '/', FCPATH . BF_ASSET_PATH .'/'. $path);
 
 				// If it has been compressed or joined, we need to
 				// use the $content var and write out to file. These should
@@ -189,7 +177,7 @@ class Bf_pipeline extends BF_Controller {
 			/*
 				Save to Cache, if we are css or js
 			 */
-			if (in_array($folder_type, $this->can_cache))
+			if (in_array($folder_type, $this->can_cache) && !$this->config->item('assets.compile'))
 			{
 				$this->cache->save( str_replace('/', '\\', $path), $contents, 300);
 			}

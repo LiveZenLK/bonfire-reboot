@@ -1,9 +1,5 @@
 # Basic Asset Handling
 
-Bonfire provides a helper library that assists in building link tags for many different types of assets. It also can work with the [Asset Pipeline](/admin/help/Developer.Assets_Pipeline) to combine and minify your assets.
-
-## Overview
-
 Assets in Bonfire work hard to help you take advantage of as much front-end performance techniques as we can, yet still keep a very flexible system. You can combine files into a single file, minify javascript or CSS files, and even fingerprint the name so you can use far-future expires headers to take advantage of browser caching.
 
 The basic use of assets assumes that all assets are stored in the <tt>public/assets</tt> folder under the folder of their specific type.
@@ -24,6 +20,44 @@ When you use one of the assets tag methods (like <tt>css_tag()</tt>, <tt>js_tag(
 To change the folder that it will use for the asset base folder ('assets' by default), you can edit the <tt>config/constants.php</tt> file and change the value of the <tt>BF_ASSET_PATH</tt> value to be a folder within the <tt>/public</tt> folder. This constant is then used in the routes file to redirect assets and as the URL used to find assets at.
 
     define('BF_ASSET_PATH', 'assets');
+
+### Backup Asset Paths
+
+If your asset does not exist in the <tt>public/assets</tt> folder, then they will be looked for in several different locations. By default, Bonfire will look for your assets in one of three possible asset paths:
+
+<tt>application/assets</tt> is for assets that belong to your application as a whole, or is common to multiple custom modules that you don't want to duplicate across modules.
+
+<tt>{module}/assets</tt> is for assets that a module might want to package with it. Each module can have its own set of assets that can be combined with all of the rest.
+
+<tt>theme/{theme}/assets</tt> is for assets specific to a single theme.
+
+Any files found in the <tt>public/assets</tt> folder will take precedence over any of the other locations. The entire point of the backup folders is to provide a simple way to package assets in modules, your application, etc, while still providing the benefits of compressing and combining files. However, compressing and combining takes time so static assets are always preferred for performance. For this reason, in production environments, the system is set to automatically compile those files into the public assets folder so that you have a static file that can be served as fast as possible.
+
+## The Pipeline
+
+When a static asset is not found, the system goes through the Asset Pipeline it will go through several possible steps. All of these steps can be turned on or off in the application config file.
+
+1. Search for the file in one of the Asset Paths
+2. Parse the file for any files to combine
+3. Combines the files into one
+4. Minifies (compresses) the file for faster transfer
+5. Compiles the file (with optional fingerprint) to the public assets folder.
+
+### Customizing the Compressors Used
+
+You can change the compressors used within the Asset Pipeline by modifying the <tt>application.php</tt> config file.
+
+    # Compressors to use
+    $config['assets.js_compressor']     = 'Minify/JSMin::minify';
+    $config['assets.css_compressor']    = 'Minify/Minify_CSS::minify';
+
+To use your own compressor, you must follow these steps:
+
+- Your libraries must be under the <tt>vendor/</tt> folder
+- The name of the class must match the name of the file, excluding the file extension.
+- After the :: is the name of the method to call. This must be a static method.
+
+Using the css_compressor from above as an example. The file is located at <tt>vendors/Minify/Minify_Css</tt>. Inside that file is a class named <tt>Minify_CSS</tt> that we will call the <tt>minify</tt> static method of with the only parameter being the contents to minify.
 
 ## Stylesheets
 

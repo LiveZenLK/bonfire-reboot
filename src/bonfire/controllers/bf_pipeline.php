@@ -103,7 +103,12 @@ class Bf_pipeline extends BF_Controller {
 						case 'flash':
 						case 'audio':
 						case 'video':
+							break;
 						case 'img':
+							// Potentially expensive process
+							// that helps when we're not compiling
+							// so images can still be dipslayed.
+							$contents = file_get_contents($file);
 							break;
 					}
 

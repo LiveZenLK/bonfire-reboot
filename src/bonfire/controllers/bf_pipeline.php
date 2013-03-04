@@ -2,7 +2,7 @@
 
 class Bf_pipeline extends BF_Controller {
 
-	protected $cache_type = 'dummy';
+	//protected $cache_type = 'dummy';
 
 	private $asset_paths = array();
 
@@ -24,7 +24,7 @@ class Bf_pipeline extends BF_Controller {
 	public function index($type)
 	{
 		// Clean up the requested asset name.
-		$path = str_ireplace(BF_ASSET_PATH .'/', '', $this->uri->uri_string());
+		$path = $this->uri->uri_string();
 
 		$folder_type = BF_Assets::determine_folder_type($path);
 
@@ -34,7 +34,6 @@ class Bf_pipeline extends BF_Controller {
 		if (!$contents = $this->cache->get(str_replace('/', '\\', $path)))
 		{
 			$contents = BF_Assets::get_asset_contents($path, $folder_type, $found_path);
-
 			/*
 				Compression
 			 */

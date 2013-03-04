@@ -514,6 +514,17 @@ class BF_Assets {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Creates the RSS-feed auto-discovery-link.
+	 *
+	 * Possible options:
+	 * 		'rel'
+	 * 		'title'
+	 * 		'href'
+	 *
+	 * @param  array  $options An array of potential options. See description.
+	 * @return string          The auto discovery link
+	 */
 	public function auto_discovery_tag($options=array())
 	{
 		if (!function_exists('current_url'))
@@ -752,6 +763,11 @@ class BF_Assets {
 	 */
 	public static function init_paths()
 	{
+		if (count(self::$asset_paths))
+		{
+			return self::$asset_paths;
+		}
+
 		$new_paths = array();
 
 		// First place to look is our application/assets folder

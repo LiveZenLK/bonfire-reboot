@@ -85,98 +85,24 @@ class Bf_pipeline extends BF_Controller {
 		 */
 		if (!$contents = $this->cache->get(str_replace('/', '\\', $path)))
 		{
-			$paths = BF_Assets::init_paths();
-			foreach ($paths as $asset_path)
-			{
-				$file = $asset_path . $path;
-
-				if (is_file($file))
-				{
-					$found_path = $file;
-
-					switch ($folder_type)
-					{
-						case 'css':
-						case 'js':
-							$contents = file_get_contents($file);
-							break;
-						case 'flash':
-						case 'audio':
-						case 'video':
-							break;
-						case 'img':
-							// Potentially expensive process
-							// that helps when we're not compiling
-							// so images can still be dipslayed.
-							$contents = file_get_contents($file);
-							break;
-					}
-
-					break;
-				}
-			}
+			$contents = BF_Assets::get_asset_contents($path, $folder_type, $found_path);
 
 			/*
 				Compression
 			 */
 			if (in_array($folder_type, $this->can_compress) && $this->config->item('assets.compress') )
 			{
-				$vendor_path = str_replace('bonfire/', '', BFPATH) .'vendor/';
-
-				switch ($folder_type)
-				{
-					case 'css':
-						list($comp_path, $method) = explode('::', $this->config->item('assets.css_compressor'));
-						list($f, $class) = explode('/', $comp_path);
-
-						require ($vendor_path . $comp_path .'.php');
-						$contents = $class::$method($contents);
-						$was_compressed = true;
-						break;
-					case 'js':
-						list($comp_path, $method) = explode('::', $this->config->item('assets.js_compressor'));
-						list($f, $class) = explode('/', $comp_path);
-
-						require ($vendor_path . $comp_path .'.php');
-						$contents = $class::$method($contents);
-						$was_compressed = true;
-						break;
-				}
+				$contents = BF_Assets::compress_string($contents, $folder_type);
+				$was_compressed = true;
 			}
 
 			/*
-				If Pipeline enabled, copy to public/assets so that
+				If Compiling is enabled, copy to public/assets so that
 				we have a static asset to serve next time.
 			 */
 			if ($this->config->item('assets.compile'))
 			{
-				// $path = final path to file (within /assets folder)
-				// $found_path = original source destination
-
-				$final_path = str_replace('//', '/', FCPATH . BF_ASSET_PATH .'/'. $path);
-
-				// If it has been compressed or joined, we need to
-				// use the $content var and write out to file. These should
-				// always be text-based files so we should be good here.
-				if ($was_joined || $was_compressed)
-				{
-					$this->load->helper('file');
-
-					if (!write_file($final_path, $contents))
-					{
-						show_error('Unable to write to file: '. $final_path);
-					}
-				}
-
-				// Otherwise we simply copy the file...
-				else if (!empty($found_path))
-				{
-
-					if (!copy($found_path, $final_path))
-					{
-						show_error('Unable to copy file: '. $final_path);
-					}
-				}
+				BF_Assets::compile_asset($contents, $path, $was_compressed, $was_joined);
 			}
 
 			/*
@@ -225,44 +151,6 @@ class Bf_pipeline extends BF_Controller {
 	// Private Methods
 	//--------------------------------------------------------------------
 
-	/**
-	 * Pulls together all of our possible asset paths into a single
-	 * array. Since this must hit the filesystem numerous times, it tries
-	 * to cache the results using your application's current Cache engine.
-	 *
-	 * @return void
-	 */
-	private function build_asset_paths()
-	{
-		$paths = array();
-
-		$this->config->load('application');
-		$this->load->helper('directory');
-
-		// Application path will override everything else!
-		$paths[] = realpath(APPPATH) .'/assets/';
-
-		// Theme paths
-		$template_paths = $this->config->item('template.template_paths');
-		foreach ($template_paths as $tp)
-		{
-			$themes = directory_map(FCPATH .$tp, 1);
-
-			if (is_array($themes))
-			{
-				foreach ($themes as $theme)
-				{
-					$paths[] = FCPATH . $tp .'/'. $theme .'/assets/';
-				}
-			}
-		}
-		unset($template_paths);
-
-		// Save it for everyone else.
-		$this->asset_paths = $paths;
-	}
-
-	//--------------------------------------------------------------------
 
 	/**
 	 * Attempts to determine the filetype that should be used. The method

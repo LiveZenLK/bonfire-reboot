@@ -679,6 +679,132 @@ class BF_Assets {
 	//--------------------------------------------------------------------
 
 	/**
+	 * Compresses a string. Used for compressing CSS and JS files.
+	 *
+	 * @param  string $contents    The file contents to compress
+	 * @param  string $folder_type Either 'css', or 'js'
+	 */
+	public static function compress_string($contents, $folder_type)
+	{
+		$vendor_path = str_replace('bonfire/', '', BFPATH) .'vendor/';
+
+		switch ($folder_type)
+		{
+			case 'css':
+				list($comp_path, $method) = explode('::', self::$ci->config->item('assets.css_compressor'));
+				list($f, $class) = explode('/', $comp_path);
+
+				require ($vendor_path . $comp_path .'.php');
+				$contents = $class::$method($contents);
+				$was_compressed = true;
+				break;
+			case 'js':
+				list($comp_path, $method) = explode('::', self::$ci->config->item('assets.js_compressor'));
+				list($f, $class) = explode('/', $comp_path);
+
+				require ($vendor_path . $comp_path .'.php');
+				$contents = $class::$method($contents);
+				$was_compressed = true;
+				break;
+		}
+
+		return $contents;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Compiles a single asset and saves the copy to the public assets folder
+	 * so that we have a static file we can deal with.
+	 *
+	 * @param  string $contents       The contents of the file to work with.
+	 * @param  string $path           The path to the original file.
+	 * @param  bool $was_compressed IF TRUE, the file has been compressed.
+	 * @param  boolean $was_joined     If TRUE, multiple files have been joined.
+	 */
+	public static function compile_asset($contents, $path, $was_compressed, $was_joined)
+	{
+		// $path = final path to file (within /assets folder)
+		// $found_path = original source destination
+
+		$final_path = str_replace('//', '/', FCPATH . BF_ASSET_PATH .'/'. $path);
+
+		// If it has been compressed or joined, we need to
+		// use the $content var and write out to file. These should
+		// always be text-based files so we should be good here.
+		if ($was_joined || $was_compressed)
+		{
+			self::$ci->load->helper('file');
+
+			if (!write_file($final_path, $contents))
+			{
+				show_error('Unable to write to file: '. $final_path);
+			}
+		}
+
+		// Otherwise we simply copy the file...
+		else if (!empty($found_path))
+		{
+			if (!copy($found_path, $final_path))
+			{
+				show_error('Unable to copy file: '. $final_path);
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Retrieves the contents of an asset. Used for CSS and JS, primarily, but
+	 * also valid for some other content types.
+	 *
+	 * @param  string  $path        The path to the original file as provided to the URL
+	 * @param  string  $folder_type The asset type, like 'css' or 'js'
+	 * @param  string $found_path   The final path where the asset was actually found at.
+	 * @return string               The contents of the asset.
+	 */
+	public function get_asset_contents($path, $folder_type, &$found_path)
+	{
+		$paths = self::init_paths();
+		$contents = '';
+
+		foreach ($paths as $asset_path)
+		{
+			$file = $asset_path . $path;
+
+			if (is_file($file))
+			{
+				$found_path = $file;
+
+				switch ($folder_type)
+				{
+					case 'css':
+					case 'js':
+						$contents = file_get_contents($file);
+						break;
+					case 'flash':
+					case 'audio':
+					case 'video':
+						break;
+					case 'img':
+						// Potentially expensive process
+						// that helps when we're not compiling
+						// so images can still be dipslayed.
+						$contents = file_get_contents($file);
+						break;
+				}
+
+				break;
+			}
+		}
+
+		return $contents;
+	}
+
+	//--------------------------------------------------------------------
+
+
+	/**
 	 * Clears all storage vars to the default, clean postiion.
 	 *
 	 * @return void

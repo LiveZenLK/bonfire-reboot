@@ -68,6 +68,52 @@ class BF_Assets {
 	 */
 	protected static $fingerprint_assets = FALSE;
 
+	/**
+	 * Maps the file extensions to default folders in our
+	 * assets paths.
+	 */
+	protected static $folder_map = array(
+			'css'		=> 'css',
+			'js'		=> 'js',
+			'bmp'		=> 'img',
+			'gif'		=> 'img',
+			'png'		=> 'img',
+			'jpg'		=> 'img',
+			'jpeg'		=> 'img',
+			'jpe'		=> 'img',
+			'tiff'		=> 'img',
+			'tif'		=> 'img',
+			'swf'		=> 'flash',
+			'mid'		=> 'audio',
+			'midi'		=> 'audio',
+			'mp3'		=> 'audio',
+			'ogg'		=> 'audio',
+			'wav'		=> 'audio',
+			'aif'		=> 'audio',
+			'aiff'		=> 'audio',
+			'aifc'		=> 'audio',
+			'mpga'		=> 'audio',
+			'mp2'		=> 'audio',
+			'ram'		=> 'audio',
+			'rm'		=> 'audio',
+			'rpm'		=> 'audio',
+			'ra'		=> 'audio',
+			'rv'		=> 'video',
+			'mpeg'		=> 'video',
+			'mpe'		=> 'video',
+			'mpg'		=> 'video',
+			'qt'		=> 'video',
+			'mov'		=> 'video',
+			'avi'		=> 'video',
+			'movie'		=> 'video'
+		);
+
+	/**
+	 * Folder Types that can be compressed and combined.
+	 */
+	public static $can_combine 		= array('css', 'js');
+	public static $can_compress 	= array('css', 'js');
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -544,7 +590,18 @@ class BF_Assets {
 		// Fingerprint the asset name for cache-busting
 		if (self::$fingerprint_assets)
 		{
-			$source = self::fingerprint($source);
+			// Make sure the file is compiled into the public path
+			$orig_path 	= self::ensure_file($source);
+			$new_path 	= '';
+
+			// Generate our fingerprinted filename...
+			$dir = dirname($source) .'/';
+			$source 	= $dir . self::fingerprint($orig_path, $folder, $new_path);
+
+			if (is_file($orig_path))
+			{
+				rename($orig_path, $new_path);
+			}
 		}
 
 		if ($include_host)
@@ -565,7 +622,7 @@ class BF_Assets {
 	 * @param  string $source The name of the source file to fingerprint.
 	 * @return string         The revised source name, including the fingerprint.
 	 */
-	public static function fingerprint($source)
+	public static function fingerprint($source, $folder_type, &$new_path=null)
 	{
 		if (!self::is_uri($source) && is_file($source))
 		{
@@ -574,7 +631,10 @@ class BF_Assets {
 			$ext = '.'. pathinfo($source, PATHINFO_EXTENSION);
 			$name = str_replace($ext, '', basename($source));
 
-			$name = $name .'-'. $hash . $ext;
+			$name .= '-'. $hash . $ext;
+
+			// Build out our new path
+			$new_path = FCPATH . BF_ASSET_PATH .'/'. $folder_type .'/'. $name;
 
 			return $name;
 		}
@@ -588,6 +648,58 @@ class BF_Assets {
 	public static function enable_fingerprinting($enable=true)
 	{
 		self::$enable_fingerprinting = $enable;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Checks to make sure a file exists and, if not, runs through the
+	 * typical pipeline to build the file out. This is most useful
+	 * so that we can fingerprint the final file.
+	 *
+	 * @param  string $source The source file name from the URL.
+	 * @param bool $compile_Asset If TRUE, will compile the asset into the public asset folder.
+	 * @return [type]         [description]
+	 */
+	public function ensure_file($source, $compile_asset=TRUE)
+	{
+		$server_path = FCPATH . BF_ASSET_PATH . str_ireplace(BF_ASSET_PATH .'/', '', $source);
+
+		if (is_file($server_path))
+		{
+			return $server_path;
+		}
+
+		// Stores where we actually find the file at.
+		$found_path = null;
+
+		$was_compressed	= false;
+		$was_joined		= false;
+
+		// Folder name based on file type (css, img, js, audio, video, flash)
+		$folder_type = self::determine_folder_type($source);
+
+		$contents = self::get_asset_contents($source, $folder_type, $found_path);
+
+		/*
+			Compression
+		 */
+		if (in_array($folder_type, self::$can_compress) && self::$ci->config->item('assets.compress') )
+		{
+			$contents = self::compress_string($contents, $folder_type);
+			$was_compressed = true;
+		}
+
+		/*
+			If Compiling is enabled, copy to public/assets so that
+			we have a static asset to serve next time.
+		 */
+		if ($compile_asset)
+		{
+			self::compile_asset($contents, str_ireplace(BF_ASSET_PATH .'/', '', $source), $found_path, $was_compressed, $was_joined);
+		}
+
+		return $server_path;
 	}
 
 	//--------------------------------------------------------------------
@@ -643,7 +755,7 @@ class BF_Assets {
 		$new_paths = array();
 
 		// First place to look is our application/assets folder
-		$new_paths[] = realpath(APPPATH) .'/assets/';
+		$new_paths[] = realpath(APPPATH) .'/';
 
 		// Add our active module to the search paths.
 		$module = self::$ci->router->fetch_module();
@@ -722,11 +834,11 @@ class BF_Assets {
 	 * @param  bool $was_compressed IF TRUE, the file has been compressed.
 	 * @param  boolean $was_joined     If TRUE, multiple files have been joined.
 	 */
-	public static function compile_asset($contents, $path, $was_compressed, $was_joined)
+	public static function compile_asset($contents, $path, $found_path, $was_compressed, $was_joined)
 	{
 		// $path = final path to file (within /assets folder)
 		// $found_path = original source destination
-
+		//$path = str_replace(  realpath(APPPATH) .'/'. BF_ASSET_PATH, '', $path);
 		$final_path = str_replace('//', '/', FCPATH . BF_ASSET_PATH .'/'. $path);
 
 		// If it has been compressed or joined, we need to
@@ -770,7 +882,7 @@ class BF_Assets {
 
 		foreach ($paths as $asset_path)
 		{
-			$file = $asset_path . $path;
+			$file = str_replace('//', '/', $asset_path . $path);
 
 			if (is_file($file))
 			{
@@ -817,6 +929,27 @@ class BF_Assets {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Attempts to determine the filetype that should be used. The method
+	 * returns the folder name that we want to check in for each of our paths.
+	 *
+	 * @param  [type] $filename [description]
+	 * @return string           The folder name to look in (css/js/img/etc)
+	 */
+	public static function determine_folder_type($filename)
+	{
+		// Get our file extension
+		$ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+		if (isset(self::$folder_map[$ext]))
+		{
+			return self::$folder_map[$ext];
+		}
+
+		return NULL;
+	}
+
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	// Private Methods

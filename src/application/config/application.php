@@ -1,16 +1,24 @@
 <?php
 
 //--------------------------------------------------------------------
+// Auto Migrate?
+//--------------------------------------------------------------------
+// We can automatically run any outstanding migrations in the core,
+// the application and the modules themselves if this is set to TRUE.
+//
+$config['auto_migrate'] = true;
+
+//--------------------------------------------------------------------
 // Module Locations
 //--------------------------------------------------------------------
 // These paths are checked in the order listed whenever a module is
 // attempting to be located, whether it's loading a library, helper,
 // or routes file.
 //
-	$config['modules_locations'] = array(
-		APPPATH .'modules/', 		// application/modules
-		BFPATH .'modules/'			// bonfire/modules
-	);
+$config['modules_locations'] = array(
+	APPPATH .'modules/', 		// application/modules
+	BFPATH .'modules/'			// bonfire/modules
+);
 
 //--------------------------------------------------------------------
 // !TEMPLATE

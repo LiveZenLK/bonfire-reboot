@@ -9,7 +9,13 @@ class BF_Controller extends CI_Controller {
 	protected $cache_type = 'dummy';
 	protected $backup_cache = 'file';
 
-	protected $theme = null;
+	// What theme should we use? If blank, will use the 'default' theme
+	protected $theme = NULL;
+
+	// If set, this language file will automatically be loaded.
+	protected $language_file = NULL;
+
+	//--------------------------------------------------------------------
 
 	public function __construct()
 	{
@@ -18,6 +24,11 @@ class BF_Controller extends CI_Controller {
 		// Make sure that caching is ALWAYS available throughout the app
 		// though it defaults to 'dummy' which won't actually cache.
 		$this->load->driver('cache', array('adapter' => $this->cache_type, 'backup' => $this->backup_cache));
+
+		if (!is_null($this->language_file))
+		{
+			$this->lang->load($this->language_file);
+		}
 	}
 
 	//--------------------------------------------------------------------

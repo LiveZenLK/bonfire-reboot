@@ -30,7 +30,7 @@ class BF_Notices {
 	protected static $notices;
 
 	protected static $sort_by 	= 'time';
-	protected static $sort_dir	= NOTICE_SORT_DESC;
+	protected static $sort_dir	= SORT_DESC;
 
 	/**
 	 * If TRUE, will use the current module's name as the group,

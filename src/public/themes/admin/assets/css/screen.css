@@ -45,6 +45,10 @@ tt {
 	padding-left: 0.25em;
 }
 
+.text-left { text-align: left !important; }
+.text-center { text-align: center !important; }
+.text-right { text-align: right !important; }
+
 /*
 	Basic Structure
  */
@@ -265,4 +269,11 @@ ul.stat-list li h4.sub {
 	color: #999;
 }
 
-
+/*
+	Tables
+ */
+.table-striped tbody > tr:nth-child(odd) > td,
+.table-striped tbody > tr:nth-child(odd) > th {
+	background: #ecebe7;
+}
+table form { margin: 0; }

@@ -41,19 +41,19 @@
 						<thead>
 							<tr>
 								<th style="vertical-align: bottom;"><?php echo lang('mig_tbl_module'); ?></th>
-								<th style="width: 6em"><?php echo lang('mig_tbl_installed_ver'); ?></th>
-								<th style="width: 6em"><?php echo lang('mig_tbl_latest_ver'); ?></th>
+								<th style="width: 6em; text-align: center"><?php echo lang('mig_tbl_installed_ver'); ?></th>
+								<th style="width: 6em; text-align: center"><?php echo lang('mig_tbl_latest_ver'); ?></th>
 								<th></th>
 							</tr>
 						</thead>
 						<tbody>
 							<?php foreach ($mod_migrations as $module => $migrations) : ?>
 							<tr>
-								<td><?php echo ucfirst($module) ?></td>
-								<td><?php echo $migrations['installed_version'] ?></td>
-								<td><?php echo $migrations['latest_version'] ?></td>
+								<td style="vertical-align: middle;"><?php echo ucfirst($module) ?></td>
+								<td style="vertical-align: middle;" class="text-center"><?php echo $migrations['installed_version'] ?></td>
+								<td style="vertical-align: middle;" class="text-center"><?php echo $migrations['latest_version'] ?></td>
 								<td style="width: 35em; text-align: right">
-									<?php echo form_open(site_url(SITE_AREA .'/developer/migrations/migrate_module/'. $module), 'class="form-horizontal"'); ?>
+									<?php echo form_open(site_url(ADMIN_PATH .'/migrations/migrate_module/'. $module), 'class="form-horizontal"'); ?>
 									<input type="hidden" name="is_module" value="1" />
 
 									<select name="version">
@@ -67,7 +67,7 @@
 									<?php endforeach; ?>
 									</select>
 
-									<input type="submit" name="migrate" class="btn btn-primary" value="<?php e(lang('mig_migrate_module')); ?>" />
+									<input type="submit" name="migrate" class="btn" value="<?php e(lang('mig_migrate_module')); ?>" />
 									<?php echo form_close(); ?>
 								</td>
 							</tr>

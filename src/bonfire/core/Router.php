@@ -1024,6 +1024,9 @@ class Route {
 		self::$areas[$area] = $controller;
 
 		// Create routes for this area.
+		self::create($area .'/(:any)/(:any)/(:any)/(:any)/(:any)', '$1/'. $controller .'/$2/$3/$4/$5');
+		self::create($area .'/(:any)/(:any)/(:any)/(:any)', '$1/'. $controller .'/$2/$3/$4');
+		self::create($area .'/(:any)/(:any)/(:any)', '$1/'. $controller .'/$2/$3');
 		self::create($area .'/(:any)/(:any)', '$1/'. $controller .'/$2');
 		self::create($area .'/(:any)', '$1/'. $controller);
 	}

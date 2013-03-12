@@ -37,31 +37,15 @@
 		<div id="nav">
 			<form action="<?php echo $form_url; ?>" method="post">
 				<input type="hidden" name="all" value="1" />
-				<input type="submit" value="All" />
+				<input type="submit" value="Run All" />
 			</form>
 			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="libraries" value="1" />
-				<input type="submit" value="Libraries" />
+				<input type="hidden" name="app_only" value="1" />
+				<input type="submit" value="All App" />
 			</form>
 			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="controllers" value="1" />
-				<input type="submit" value="Controllers" />
-			</form>
-			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="models" value="1" />
-				<input type="submit" value="Models" />
-			</form>
-			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="helpers" value="1" />
-				<input type="submit" value="Helpers" />
-			</form>
-			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="views" value="1" />
-				<input type="submit" value="Views" />
-			</form>
-			<form action="<?php echo $form_url; ?>" method="post">
-				<input type="hidden" name="bugs" value="1" />
-				<input type="submit" value="Bugs" />
+				<input type="hidden" name="bf_only" value="1" />
+				<input type="submit" value="All Bonfire" />
 			</form>
 
 			<?php

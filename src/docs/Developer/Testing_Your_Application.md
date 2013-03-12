@@ -56,7 +56,7 @@ At it's simplest, you can run the <tt>tests/run.php</tt> script and all of your 
     php run.php
 
 
-#### Ignoring Bonfire Tests
+#### Ignoring Bonfire Tests via CLI
 
 You generally are not going to want to test both your entire application as well as the Bonfire core at the same. To make this a little simpler, but still run a complete set of tests at once, we have provided two CLI arguments.
 
@@ -91,3 +91,28 @@ First, create a new file at <tt>src/public/tests.php</tt>. This file only needs 
     <?php require('../../tests/run.php');
 
 Now, when you access <tt>http://mybonfiresite.com/tests.php</tt> the tests GUI should appear.
+
+#### Ignoring Bonfire Tests via GUI
+
+You generally are not going to want to test both your entire application as well as the Bonfire core at the same. To make this a little simpler, but still run a complete set of tests at once, we have provided two CLI arguments.
+
+<tt>a, app_only</tt>
+
+Will run all tests in the tests folder except for those located in the <tt>bonfire</tt> folder.
+
+    http://bonfire.dev/tests.php?a
+    http://bonfire.dev/tests.php?app_only
+
+<tt>-b, bf_only</tt>
+
+Will run all tests in the tests folder except for those located in the <tt>application</tt> folder. This is intended to make contributing to Bonfire easier.
+
+    http://bonfire.dev/tests.php?b
+    http://bonfire.dev/tests.php?bf_only
+
+#### Running A Single Test
+
+You can run a single test from the command line with the <tt>f</tt> or <tt>file</tt> command line arguments. The filename must be relative to the tests folder.
+
+    http://bonfire.dev/tests.php?f=bonfire/Libraries/BF_AssetsTest.php
+    http://bonfire.dev/tests.php?file=bonfire/Libraries/BF_AssetsTest.php

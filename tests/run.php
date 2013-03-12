@@ -30,7 +30,8 @@ define('BF_DIR', MAIN_PATH .'src/bonfire/');			// Bonfire core directory
 //  This can be modified at runtime with to include/exclude app-specific
 //  or Bonfire core folders with the --app_only or -bf_only options on the CLI
 $ignore_folders = array(
-	MAIN_PATH .'tests/vendor'	// No need to test someone else's packages here.
+	MAIN_PATH .'tests/vendor',	// No need to test someone else's packages here.
+	TESTS_DIR .'support',
 );
 
 // Only Folder
@@ -54,17 +55,7 @@ require_once SIMPLETEST . 'unit_tester.php';
 require_once SIMPLETEST . 'mock_objects.php';
 require_once SIMPLETEST . 'collector.php';
 require_once SIMPLETEST . 'web_tester.php';
-//require_once SIMPLETEST . 'extensions/my_reporter.php';
-
-// Require Mockery
-if (is_file(MAIN_PATH . 'src/vendor/mockery/mockery/library/Mockery.php'))
-{
-	require_once MAIN_PATH . 'src/vendor/mockery/mockery/library/Mockery.php';
-}
-else
-{
-	die('Mockery library not found. Please run "composer upgrade --dev" to install.');
-}
+require_once TESTS_DIR . 'support/my_reporter.php';
 
 //Capture CodeIgniter output, discard and load system into $ci variable
 ob_start();
@@ -345,7 +336,7 @@ function discover_tests($start_folder=null, $ignore_onlys=false)
 			// Folders get ran back through this function
 			// and will return an array of valid files.
 			// Merge this array with ours and call it good.
-			if (is_dir($start_folder .'/'. $folder))
+			if (is_dir($start_folder .'/'. $folder) && !in_array($start_folder .'/'. $folder, $ignore_folders))
 			{
 				$f = discover_tests($start_folder .'/'. $folder, true);
 				$files = array_merge($files, $f);
@@ -373,7 +364,7 @@ function discover_tests($start_folder=null, $ignore_onlys=false)
 
 // Bypass any CSRF protection in order to avoid
 // modifying simpletest
-if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST")
+if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST" && isset($_COOKIE['ci_csrf_token']))
 {
 	$_POST['ci_csrf_token'] = $_COOKIE['ci_csrf_token'];
 }
@@ -423,6 +414,27 @@ if ($is_cli)
 	}
 }
 
+// Setup similar options via $_GET vars for the GUI version
+else
+{
+	if (isset($_GET['a']) || isset($_GET['app_only']) || isset($_POST['app_only']))
+	{
+		$ignore_folders[] = rtrim( str_replace('src', 'tests', BF_DIR), '/');
+	}
+	else if (isset($_GET['b']) || isset($_GET['bf_only']) || isset($_POST['bf_only']))
+	{
+		$ignore_folders[] = rtrim(str_replace('src', 'tests', APP_DIR), '/');
+	}
+	else if (isset($_GET['f']) || isset($_GET['file']))
+	{
+		$only_file = isset($_GET['f']) ? $_GET['f'] : $_GET['file'];
+	}
+	else if (isset($_GET['d']) || isset($_GET['dir']))
+	{
+		$only_folder = isset($_GET['d']) ? $_GET['d'] : $_GET['dir'];
+	}
+}
+
 $test_suite = new TestSuite();
 $test_suite->_label = 'Bonfire Test Suite';
 
@@ -440,19 +452,7 @@ $test_start = microtime();
 $test_files = null;
 
 // TODO Revise to allow args from the CLI as folder/file names
-if (isset($_POST['test'])) //single test
-{
-	$file = $_POST['test'];
-
-	if (file_exists(TESTS_DIR . $file))
-	{
-		$test_suite->addFile(TESTS_DIR . $file);
-	}
-}
-else
-{
-	$test_files = discover_tests();
-}
+$test_files = discover_tests();
 
 // Add the found test files to the suite to be tested.
 if (is_array($test_files))

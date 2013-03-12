@@ -15,6 +15,19 @@ class BF_Controller extends CI_Controller {
 	// If set, this language file will automatically be loaded.
 	protected $language_file = NULL;
 
+	// All supported output formats.
+	// Used by the render_as() method.
+	private $supported_formats = array(
+		'json'		=> 'application/json',
+		'xml'		=> 'application/xml',
+		'extjson'	=> 'application/json',
+		'jsonp'		=> 'application/javascript',
+		'serialized'	=> 'application/vnd.php.serialized',
+		'php'		=> 'text/plain',
+		'html'		=> 'text/html',
+		'csv'		=> 'application/csv'
+	);
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -114,6 +127,7 @@ class BF_Controller extends CI_Controller {
 	}
 
 	//--------------------------------------------------------------------
+
 	/**
 	 * Converts the provided array or object to JSON, sets the proper MIME type,
 	 * and outputs the data.
@@ -135,6 +149,77 @@ class BF_Controller extends CI_Controller {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Render data out as a specific type of data, like json, extjson, xml, etc.
+	 * Built for AJAX power.
+	 *
+	 * @param  strign $format    The output format to use
+	 * @param  array  $data      The data to output
+	 * @param  int    $http_code The HTTP code to send along with it
+	 */
+	public function render_as($format, $data=array(), $http_code=NULL)
+	{
+		$output = '';
+
+		// If the data is empty and no code provided, error and bail!
+		if (empty($data) && is_null($http_code))
+		{
+			$http_code = 404;
+		}
+
+		// Otherwise (if no data but 200 provided...) or some data, carry on!
+		else
+		{
+			// Default to a 200 (OK) HTTP code
+			is_numeric($http_code) OR $http_code = 200;
+
+			// Load the BF_Format library (thanks Phil!)
+			$this->load->library('BF_Format', null, 'format');
+
+			// Make sure we have a valid formatter
+			// If it does, return the formatted output
+			if (method_exists($this->format, 'to_'. $format))
+			{
+				$callback = $this->input->get('callback', TRUE);
+
+				// HTML
+				if ($format == 'html')
+				{
+					$output = $this->format->factory( $data['data'] )->to_html();
+				}
+				// JSONP
+				else if (!empty($callback) && substr($format, 0, 4) == 'json')
+				{
+					$output = $this->format->factory( $data, NULL, $callback )->to_jsonp();
+				}
+				// All other formats
+				else
+				{
+					$output = $this->format->factory( $data )->{'to_'. $format}();
+				}
+			}
+			// format not supported? Dump it directly
+			else
+			{
+				$output = @$data['data'];
+			}
+		}
+
+		// Make sure the AJAX call isn't cached and set our content type/length
+		$this->output->set_header('HTTP/1.1: '. $http_code);
+		$this->output->set_header('Status: '. $http_code);
+		$this->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
+		$this->output->set_header('cache-Control: post-check=0, pre-check=0');
+		$this->output->set_header('Pragma: non-cache');
+		$this->output->set_header('Content-Type: '. $this->supported_formats[$output_format]);
+		$this->output->set_header('Content-Length: '. @strlen($output));
+
+		$this->output->set_output($output);
+	}
+
+	//--------------------------------------------------------------------
+
 
 	/**
 	 * Sends the supplied string to the browser with a MIME type of text/javascript.

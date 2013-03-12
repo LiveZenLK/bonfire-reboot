@@ -46,7 +46,7 @@ $route['404_override'] = '';
 Route::create(BF_ASSET_PATH .'/(:any)', 'bf_pipeline/$1');
 
 // Map all /admin/* methods to the module's admin controller.
-Route::area('admin', 'admin');
+Route::area(ADMIN_PATH, 'admin');
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

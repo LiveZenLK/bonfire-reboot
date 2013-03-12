@@ -14,6 +14,13 @@
 define('BF_ASSET_PATH', 'assets');
 
 /*
+	Admin Area
+
+	The site location for all Admin related paths.
+ */
+define('ADMIN_PATH', 'admin');
+
+/*
 |--------------------------------------------------------------------------
 | File and Directory Modes
 |--------------------------------------------------------------------------

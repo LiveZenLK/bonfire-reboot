@@ -452,7 +452,8 @@ $test_start = microtime();
 $test_files = null;
 
 // TODO Revise to allow args from the CLI as folder/file names
-$test_files = discover_tests();
+$only_folder = isset($only_folder) && !empty($only_folder) ? TESTS_DIR . $only_folder : null;
+$test_files = discover_tests($only_folder);
 
 // Add the found test files to the suite to be tested.
 if (is_array($test_files))

@@ -357,14 +357,14 @@ class BF_Model extends CI_Model {
      */
     public function insert($data, $skip_validation=FALSE)
     {
-        if ($skip_validation === FALSE)
-        {
-            $data = $this->validate($data);
-        }
-
         if ($data !== FALSE)
         {
             $data = $this->trigger('before_insert', $data);
+
+            if ($skip_validation === FALSE)
+            {
+                $data = $this->validate($data);
+            }
 
             $this->db->insert($this->_table, $data);
             $id = $this->db->insert_id();

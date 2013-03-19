@@ -39,6 +39,11 @@ h5 {
 	background: #fff;
 	border-color: #ddd;
 }
+.hero-unit { background: #fff; }
+.hero-unit p {
+	max-width: 45em;
+	color: #777;
+}
 
 tt {
 	color: #a7a7a7;
@@ -301,3 +306,5 @@ table form { margin: 0; }
 	box-shadow: none;
 }
 .modal form { margin: 0; }
+
+

@@ -158,7 +158,7 @@ if ( ! function_exists('load_class'))
 
 			if (class_exists($name) === FALSE)
 			{
-				require(APPPATH.$directory.'/'.config_item('subclass_prefix').$class.'.php');
+				require(BFPATH.$directory.'/BF_'.$class.'.php');
 			}
 		}
 

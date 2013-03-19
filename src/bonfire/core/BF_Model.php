@@ -194,6 +194,12 @@ class BF_Model extends CI_Model {
         // Make sure our temp return type is correct.
         $this->temp_return_type = $this->return_type;
 
+        // Make sure our database is loaded
+        if (!is_object($this->db))
+        {
+            $this->load->database();
+        }
+
         log_message('debug', 'BF_Model Class Initialized');
     }
 
@@ -1194,31 +1200,31 @@ class BF_Model extends CI_Model {
     //                            ->get();
     //
 
-    public function select ($select = '*', $escape = NULL) { return $this->db->select($select, $escape); }
-    public function select_max ($select = '', $alias = '') { return $this->db->select_max($select, $alias); }
-    public function select_min ($select = '', $alias = '') { return $this->db->select_min($select, $alias); }
-    public function select_avg ($select = '', $alias = '') { return $this->db->select_avg($select, $alias); }
-    public function select_sum ($select = '', $alias = '') { return $this->db->select_sum($select, $alias); }
-    public function distinct ($val=TRUE) {return $this->db->distinct($val); }
-    public function from ($from) { return $this->db->from($from); }
-    public function join($table, $cond, $type = '') { return $this->db->join($table, $cond, $type); }
-    public function where($key, $value = NULL, $escape = TRUE) { return $this->db->where($key, $value, $escape); }
-    public function or_where($key, $value = NULL, $escape = TRUE) { return $this->db->or_where($key, $value, $escape); }
-    public function where_in($key = NULL, $values = NULL) { return $this->db->where_in($key, $values); }
-    public function or_where_in($key = NULL, $values = NULL) { return $this->db->or_where_in($key, $values); }
-    public function where_not_in($key = NULL, $values = NULL) { return $this->db->where_not_in($key, $values); }
-    public function or_where_not_in($key = NULL, $values = NULL) { return $this->db->or_where_not_in($key, $values); }
-    public function like($field, $match = '', $side = 'both') { return $this->db->like($field, $match, $side); }
-    public function not_like($field, $match = '', $side = 'both') { return $this->db->not_like($field, $match, $side); }
-    public function or_like($field, $match = '', $side = 'both') { return $this->db->or_like($field, $match, $side); }
-    public function or_not_like($field, $match = '', $side = 'both') { return $this->db->or_not_like($field, $match, $side); }
-    public function group_by($by) { return $this->db->group_by($by); }
-    public function having($key, $value = '', $escape = TRUE) { return $this->db->having($key, $value, $escape); }
-    public function or_having($key, $value = '', $escape = TRUE) { return $this->db->or_having($key, $value, $escape); }
-    public function order_by($orderby, $direction = '') { return $this->db->order_by($orderby, $direction); }
-    public function limit($value, $offset = '') { return $this->db->limit($value, $offset); }
-    public function offset($offset) { return $this->db->offset($offset); }
-    public function set($key, $value = '', $escape = TRUE) { return $this->db->set($key, $value, $escape); }
-    public function count_all_results() { return $this->db->count_all_results($this->_table); }
+    public function select ($select = '*', $escape = NULL) { $this->db->select($select, $escape); return $this; }
+    public function select_max ($select = '', $alias = '') { $this->db->select_max($select, $alias); return $this; }
+    public function select_min ($select = '', $alias = '') { $this->db->select_min($select, $alias); return $this; }
+    public function select_avg ($select = '', $alias = '') { $this->db->select_avg($select, $alias); return $this; }
+    public function select_sum ($select = '', $alias = '') { $this->db->select_sum($select, $alias); return $this; }
+    public function distinct ($val=TRUE) { $this->db->distinct($val); return $this; }
+    public function from ($from) { $this->db->from($from); return $this; }
+    public function join($table, $cond, $type = '') { $this->db->join($table, $cond, $type); return $this; }
+    public function where($key, $value = NULL, $escape = TRUE) { $this->db->where($key, $value, $escape); return $this; }
+    public function or_where($key, $value = NULL, $escape = TRUE) { $this->db->or_where($key, $value, $escape); return $this; }
+    public function where_in($key = NULL, $values = NULL) { $this->db->where_in($key, $values); return $this; }
+    public function or_where_in($key = NULL, $values = NULL) { $this->db->or_where_in($key, $values); return $this; }
+    public function where_not_in($key = NULL, $values = NULL) { $this->db->where_not_in($key, $values); return $this; }
+    public function or_where_not_in($key = NULL, $values = NULL) { $this->db->or_where_not_in($key, $values); return $this; }
+    public function like($field, $match = '', $side = 'both') { $this->db->like($field, $match, $side); return $this; }
+    public function not_like($field, $match = '', $side = 'both') { $this->db->not_like($field, $match, $side); return $this; }
+    public function or_like($field, $match = '', $side = 'both') { $this->db->or_like($field, $match, $side); return $this; }
+    public function or_not_like($field, $match = '', $side = 'both') { $this->db->or_not_like($field, $match, $side); return $this; }
+    public function group_by($by) { $this->db->group_by($by); return $this; }
+    public function having($key, $value = '', $escape = TRUE) { $this->db->having($key, $value, $escape); return $this; }
+    public function or_having($key, $value = '', $escape = TRUE) { $this->db->or_having($key, $value, $escape); return $this; }
+    public function order_by($orderby, $direction = '') { $this->db->order_by($orderby, $direction); return $this; }
+    public function limit($value, $offset = '') { $this->db->limit($value, $offset); return $this; }
+    public function offset($offset) { $this->db->offset($offset); return $this; }
+    public function set($key, $value = '', $escape = TRUE) { $this->db->set($key, $value, $escape); return $this; }
+    public function count_all_results() { $this->db->count_all_results($this->_table); return $this; }
 
 }
